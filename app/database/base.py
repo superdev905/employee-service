@@ -8,3 +8,4 @@ from ..API.v1.modules.rsh.model import RSH
 from ..API.v1.modules.scholarship.model import Scholarship
 from ..API.v1.modules.type_home.model import TypeHome
 from ..API.v1.modules.type_subsidy.model import TypeSubsidy
+from ..API.v1.modules.employee.model import Employee

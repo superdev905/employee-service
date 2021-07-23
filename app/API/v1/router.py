@@ -8,11 +8,13 @@ from ..v1.modules.rsh.routes import router as rsh_router
 from ..v1.modules.scholarship.routes import router as scholarship_router
 from ..v1.modules.type_home.routes import router as type_home_router
 from ..v1.modules.type_subsidy.routes import router as type_subsidy_router
+from ..v1.modules.employee.routes import router as employee_router
 
 
 router = APIRouter()
 
 
+router.include_router(employee_router)
 router.include_router(activity_router)
 router.include_router(bank_router)
 router.include_router(marital_status_router)
