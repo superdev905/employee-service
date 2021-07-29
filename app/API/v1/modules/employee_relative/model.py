@@ -1,16 +1,18 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import Boolean, DateTime
 from app.database.base_class import Base
 from sqlalchemy import Column, Integer, String
 
 
-class Employee(Base):
-    __tablename__ = "employee"
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    run = Column(String(12), nullable=False, unique=True, primary_key=True)
-    names = Column(String(120), nullable=False)
+class EmployeeRelative(Base):
+    __tablename__ = "employee_relative"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    employee_run = Column(String(12),
+                          ForeignKey('employee.run'), nullable=False)
+    run = Column(String(12))
+    names = Column(String(255), nullable=False)
     paternal_surname = Column(String(120), nullable=False)
     maternal_surname = Column(String(120), nullable=False)
     born_date = Column(DateTime, nullable=False)
@@ -19,18 +21,18 @@ class Employee(Base):
         'marital_status.id', ondelete='cascade'))
     scholarship_id = Column(Integer, ForeignKey(
         'scholarship.id', ondelete='cascade'))
-    disability = Column(String(2), nullable=False)
-    credential_disability = Column(String(2), nullable=False)
-    recognize = Column(String(2), nullable=False, default="NO")
     nationality_id = Column(Integer, ForeignKey(
         'nationality.id', ondelete='cascade'))
-    alive = Column(String(2), nullable=False)
-    bank_id = Column(Integer, ForeignKey(
-        'bank.id', ondelete='cascade'), nullable=True)
-    account_type = Column(String(100))
-    account_number = Column(String(100))
-    rsh = Column(String(100))
-    rsh_percentage = Column(String(100))
+    job_id = Column(Integer, ForeignKey(
+        'activity.id', ondelete='cascade'))
+    relationship_id = Column(Integer, ForeignKey(
+        'relationship.id', ondelete='cascade'))
+    legal_charge = Column(String(2), nullable=False)
+    rsh = Column(String(2))
+    rsh_percentage_id = Column(
+        Integer, ForeignKey('rsh.id', ondelete="cascade"))
+    state = Column(String(7), nullable=False, default="CREATED")
+    is_main = Column(Boolean, nullable=False, default=True)
     created_by = Column(String(20), default="Jhon Doe")
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())
@@ -40,8 +42,9 @@ class Employee(Base):
     marital_status = relationship('MaritalStatus', uselist=False)
     scholarship = relationship('Scholarship', uselist=False)
     nationality = relationship('Nationality', uselist=False)
-    bank = relationship('Bank', uselist=False)
-    contacts = relationship(
-        "EmployeeContact", back_populates="employee", lazy="select")
-    relatives = relationship(
-        "EmployeeRelative", back_populates="employee", lazy="select")
+    job = relationship('Activity', uselist=False)
+    relationship_detail = relationship('Relationship', uselist=False)
+    rsh_percentage = relationship('RSH', uselist=False)
+    employee = relationship(
+        "Employee", back_populates="relatives", foreign_keys=[employee_run], lazy="joined")
+

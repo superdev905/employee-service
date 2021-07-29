@@ -9,3 +9,5 @@ from ..API.v1.modules.scholarship.model import Scholarship
 from ..API.v1.modules.type_home.model import TypeHome
 from ..API.v1.modules.type_subsidy.model import TypeSubsidy
 from ..API.v1.modules.employee.model import Employee
+from ..API.v1.modules.employee_contact.model import EmployeeContact
+from ..API.v1.modules.employee_relative.model import EmployeeRelative

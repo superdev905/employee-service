@@ -16,7 +16,8 @@ class EmployeeCreate(BaseModel):
     marital_status_id: int
     scholarship_id: int
     disability: str
-    credential_disability: str
+    credential_disability: Optional[str]
+    recognize: str
     nationality_id: int
     alive: str
     bank_id: Optional[int]
@@ -39,6 +40,7 @@ class EmployeeCreate(BaseModel):
                 "scholarship_id": 1,
                 "disability": "NO",
                 "credential_disability": "NO",
+                "recognize": "NO",
                 "nationality_id": 1,
                 "alive": "SI",
                 "bank_id": 1,
@@ -50,5 +52,8 @@ class EmployeeCreate(BaseModel):
         }
 
 
-class Employee (EmployeeCreate):
+class EmployeeSchema (EmployeeCreate):
     id: int
+
+    class Config:
+        orm_mode = True
