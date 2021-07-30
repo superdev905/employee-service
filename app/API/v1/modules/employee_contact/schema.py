@@ -24,7 +24,7 @@ class EmployeeContactCreate(BaseModel):
     employee_run: str
     state: Optional[str]
     is_main: bool
-    confirmation_date : datetime
+    confirmation_date: datetime
 
     class Config:
         orm_mode = True
@@ -46,6 +46,18 @@ class EmployeeContactCreate(BaseModel):
                 "is_confirmed": False,
                 "employee_id": 1,
                 "is_main": True
+            }
+        }
+
+
+class EmployeeContactPatch(BaseModel):
+    state: Optional[str]
+
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "state": "DELETED",
             }
         }
 

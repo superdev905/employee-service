@@ -24,7 +24,7 @@ def overloaded_create_one(employee: EmployeeCreate, db: Session = Depends(get_da
     db.add(saved_employee)
     db.commit()
     db.refresh(saved_employee)
-    return {"message": "Saved"}
+    return saved_employee
 
 
 @router.get("/{item_id}")

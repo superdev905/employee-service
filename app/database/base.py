@@ -11,3 +11,13 @@ from ..API.v1.modules.type_subsidy.model import TypeSubsidy
 from ..API.v1.modules.employee.model import Employee
 from ..API.v1.modules.employee_contact.model import EmployeeContact
 from ..API.v1.modules.employee_relative.model import EmployeeRelative
+from ..API.v1.modules.isapre_fonasa.model import IsapreFonasa
+from ..API.v1.modules.afp_isp.model import AfpIsp
+from ..API.v1.modules.property_home.model import PropertyHome
+from ..API.v1.modules.pension_situation.model import PensionSituation
+from ..API.v1.modules.housing_situation.model import HousingSituation
+from ..API.v1.modules.specialty.model import Specialty
+from ..API.v1.modules.sub_specialty.model import SubSpecialty
+from ..API.v1.modules.entity.model import Entity
+from ..API.v1.modules.specialization.model import Specialization
+from ..API.v1.modules.employee_job.model import EmployeeJob

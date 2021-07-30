@@ -1,11 +1,12 @@
 from typing import Optional
 from fastapi.param_functions import Depends
 from sqlalchemy.orm.session import Session
+from fastapi.exceptions import HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from .model import EmployeeContact
-from .schema import EmployeeContact as EmployeeContactSchema, EmployeeContactCreate
+from .schema import EmployeeContact as EmployeeContactSchema, EmployeeContactCreate, EmployeeContactPatch
 
 
 router = SQLAlchemyCRUDRouter(
@@ -37,3 +38,19 @@ def overloaded_create_one(contact: EmployeeContactCreate, db: Session = Depends(
     db.commit()
     db.refresh(db_obj)
     return db_obj
+
+
+@router.patch('/{item_id}')
+def block_one(item_id: int, patch_body: EmployeeContactPatch,  db: Session = Depends(get_database)):
+    found_employee = db.query(EmployeeContact).filter(
+        EmployeeContact.id == item_id).first()
+    if not found_employee:
+        raise HTTPException(
+            status_code=400, detail="Este empleado no existe")
+    found_employee.state = patch_body.state
+    
+    db.add(found_employee)
+    db.commit()
+    db.refresh(found_employee)
+
+    return found_employee

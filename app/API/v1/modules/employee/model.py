@@ -45,3 +45,5 @@ class Employee(Base):
         "EmployeeContact", back_populates="employee", lazy="select")
     relatives = relationship(
         "EmployeeRelative", back_populates="employee", lazy="select")
+    jobs = relationship(
+        "EmployeeJob", back_populates="employee", lazy="select")
