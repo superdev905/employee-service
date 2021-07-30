@@ -1,28 +1,15 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
-from sqlalchemy.orm import relationship
-from faker import Faker
-
-fake = Faker()
-"""
-employee_id = Column(Integer,
-                         ForeignKey('employee.id'), nullable=False)
-    admission_date = Column(DateTime, nullable=False)
-    business_id = Column(Integer, nullable=False)
-    construction_id = Column(Integer, nullable=False)
-    contract_term = Column(String(50), nullable=False)
-    contract_type = Column(String(50), nullable=False)
-    leave_date = Column(DateTime)
-    leave_motive = Column(String(120))
-    salary = Column(Float, nullable=False)"""
 
 
 class EmployeeJobCreate(BaseModel):
     employee_id: int
     admission_date: datetime
     business_id: int
+    business_name: Optional[str]
     construction_id: int
+    construction_name: Optional[str]
     contract_term: str
     contract_type: str
     leave_date: Optional[datetime]

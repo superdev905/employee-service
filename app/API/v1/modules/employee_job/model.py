@@ -1,3 +1,4 @@
+from ast import Str
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import ForeignKey
@@ -13,7 +14,9 @@ class EmployeeJob(Base):
                          ForeignKey('employee.id'), nullable=False)
     admission_date = Column(DateTime, nullable=False)
     business_id = Column(Integer, nullable=False)
+    business_name = Column(String(255))
     construction_id = Column(Integer, nullable=False)
+    construction_name = Column(String(255))
     contract_term = Column(String(50), nullable=False)
     contract_type = Column(String(50), nullable=False)
     leave_date = Column(DateTime)
