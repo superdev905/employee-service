@@ -21,6 +21,7 @@ from ..v1.modules.sub_specialty.routes import router as sub_specialty_router
 from ..v1.modules.entity.routes import router as entity_router
 from ..v1.modules.specialization.routes import router as specialization_router
 from ..v1.modules.employee_job.routes import router as employee_job_router
+from ..v1.modules.file.routes import router as file_router
 
 
 router = APIRouter()
@@ -31,6 +32,7 @@ router.include_router(employee_contact_router)
 router.include_router(employee_relative_router)
 router.include_router(pension_situation_router)
 router.include_router(housing_situation_router)
+router.include_router(file_router)
 router.include_router(specialization_router)
 router.include_router(employee_job_router)
 router.include_router(activity_router)
