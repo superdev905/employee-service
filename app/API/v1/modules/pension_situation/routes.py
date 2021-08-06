@@ -26,7 +26,7 @@ def overloaded_get_all(skip: int = None,
     filters = []
     if employee_id:
         filters.append(PensionSituation.employee_id == employee_id)
-
+    filters.append(PensionSituation.state != "DELETED")
     return db.query(PensionSituation).filter(*filters).options(
         joinedload(PensionSituation.afp_isp),
         joinedload(PensionSituation.isapre_fonasa)).offset(skip).limit(limit).all()

@@ -26,7 +26,7 @@ def overloaded_get_all(skip: int = 0,
     filters = []
     if employee_id:
         filters.append(HousingSituation.employee_id == employee_id)
-    filters.append(HousingSituation.state == "CREATED")
+    filters.append(HousingSituation.state != "DELETED")
     return db.query(HousingSituation).filter(*filters).options(
         joinedload(HousingSituation.type_home),
         joinedload(HousingSituation.property_home),
