@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import joinedload
@@ -33,6 +34,29 @@ def overloaded_get_all(skip: int = 0,
         joinedload(Specialization.specialty_detail),
         joinedload(Specialization.certifying_entity)).offset(skip).limit(limit).all()
 
+
+@router.put('/{item_id}')
+def update_one(item_id: int, update_body: SpecializationPatch, db: Session = Depends(get_database)):
+    found_obj = db.query(Specialization).filter(
+        Specialization.id == item_id).first()
+    if not found_obj:
+        raise HTTPException(
+            status_code=400, detail="Este registro no existe")
+
+    obj_data = jsonable_encoder(found_obj)
+
+    if isinstance(update_body, dict):
+        update_data = update_body
+    else:
+        update_data = update_body.dict(exclude_unset=True)
+    for field in obj_data:
+        if field in update_data:
+            setattr(found_obj, field, update_data[field])
+    db.add(found_obj)
+    db.commit()
+    db.refresh(found_obj)
+
+    return found_obj
 
 @router.patch('/{item_id}')
 def block_one(item_id: int, patch_body: SpecializationPatch, db: Session = Depends(get_database)):
