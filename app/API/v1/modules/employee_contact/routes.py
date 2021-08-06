@@ -32,6 +32,11 @@ def overloaded_get_all(skip: int = None,
 
 @router.post("")
 def overloaded_create_one(contact: EmployeeContactCreate, db: Session = Depends(get_database)):
+
+    if db.query(EmployeeContact).filter(EmployeeContact.email == contact.email).first():
+        raise HTTPException(
+            status_code=400, detail="Este correo ya está registrado")
+
     obj_relative = jsonable_encoder(contact)
     db_obj = EmployeeContact(**obj_relative)
     db.add(db_obj)
@@ -48,7 +53,7 @@ def block_one(item_id: int, patch_body: EmployeeContactPatch,  db: Session = Dep
         raise HTTPException(
             status_code=400, detail="Este empleado no existe")
     found_employee.state = patch_body.state
-    
+
     db.add(found_employee)
     db.commit()
     db.refresh(found_employee)

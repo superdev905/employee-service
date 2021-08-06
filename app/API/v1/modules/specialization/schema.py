@@ -11,7 +11,7 @@ class SpecializationCreate(BaseModel):
     certifying_entity_id: Optional[int]
     is_certificated: str
     certification_url: Optional[str] = ''
-    certificated_date: datetime
+    certificated_date: Optional[datetime]
     state: Optional[str]
 
     class Config:

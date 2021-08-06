@@ -20,7 +20,7 @@ class Specialization(Base):
                                   ForeignKey('entity.id'))
     is_certificated = Column(String(2))
     certification_url = Column(String(255))
-    certificated_date = Column(DateTime, nullable=False)
+    certificated_date = Column(DateTime)
     state = Column(String(7), nullable=False, default="CREATED")
     created_by = Column(String(20), default="Jhon Doe")
     created_at = Column(DateTime(timezone=True),
