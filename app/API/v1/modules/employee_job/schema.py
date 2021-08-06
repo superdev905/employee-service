@@ -12,8 +12,8 @@ class EmployeeJobCreate(BaseModel):
     construction_name: Optional[str]
     contract_term: str
     contract_type: str
-    leave_date: Optional[datetime]
-    leave_motive: Optional[str]
+    leave_date: Optional[datetime] = None
+    leave_motive: Optional[str] = None
     salary: float
     state: Optional[str]
 

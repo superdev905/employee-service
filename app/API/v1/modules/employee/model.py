@@ -31,6 +31,8 @@ class Employee(Base):
     account_number = Column(String(100))
     rsh = Column(String(100))
     rsh_percentage = Column(String(100))
+    state = Column(String(7), nullable=False,
+                   default="CREATED", server_default="CREATED")
     created_by = Column(String(20), default="Jhon Doe")
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())
