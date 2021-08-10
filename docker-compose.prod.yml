@@ -4,11 +4,11 @@ services:
   employee-api:
     build: .
     restart: unless-stopped
-    command: bash -c "alembic upgrade head && uvicorn app.main:app --workers 1 --host 0.0.0.0 --port 8000"
+    command: bash -c "alembic upgrade head && uvicorn app.main:app --workers 1 --host 0.0.0.0 --port 80"
     volumes:
       - .:/app
     ports:
-      - 8000:8000
+      - 5104:80
   db:
     restart: unless-stopped
     image: postgres:13-alpine
