@@ -26,7 +26,7 @@ def overloaded_get_all(skip: int = None,
     filters = []
     if employee_run:
         filters.append(EmployeeContact.employee_run == employee_run)
-
+    filters.append(EmployeeContact.state != "DELETED")
     return db.query(EmployeeContact).filter(*filters).offset(skip).limit(limit).all()
 
 
