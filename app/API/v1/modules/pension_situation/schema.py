@@ -7,7 +7,7 @@ class PensionSituationCreate(BaseModel):
     isapre_fonasa_id: int
     afp_isp_id: int
     is_pensioner: str
-    pension_amount: Optional[float]
+    pension_amount: Optional[float]   
     belongs_to_recognize: str
     is_main: Optional[bool]
     state: Optional[str]
