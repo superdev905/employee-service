@@ -23,9 +23,9 @@ class EmployeeCreate(BaseModel):
     bank_id: Optional[int]
     account_type: Optional[str]
     account_number: Optional[str]
-    state :Optional[str]
+    state: Optional[str]
     rsh: str
-    rsh_percentage: str
+    rsh_percentage: Optional[str]
 
     class Config:
         orm_mode = True
@@ -52,10 +52,13 @@ class EmployeeCreate(BaseModel):
             }
         }
 
+
 class EmployeePatch (BaseModel):
-    state : Optional[str]
-    class Config :
+    state: Optional[str]
+
+    class Config:
         orm_mode = True
+
 
 class EmployeeSchema (EmployeeCreate):
     id: int

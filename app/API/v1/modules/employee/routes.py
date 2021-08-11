@@ -24,6 +24,7 @@ router = SQLAlchemyCRUDRouter(
 def get_all(skip: int = 0, limit: int = 30,
             search: Optional[str] = None,
             state: Optional[str] = None,
+            include_total: Optional[bool] = False,
             db: Session = Depends(get_database)):
     state_filters = []
     if state:
@@ -36,8 +37,15 @@ def get_all(skip: int = 0, limit: int = 30,
         str_filters.append(Employee.paternal_surname.ilike(formatted_search))
         str_filters.append(Employee.maternal_surname.ilike(formatted_search))
         str_filters.append(Employee.run.ilike(formatted_search))
+    total = 0
+    if(include_total):
+        total = len(db.query(Employee).filter(
+            and_(*state_filters, or_(*str_filters))).all())
 
-    return db.query(Employee).filter(and_(*state_filters, or_(*str_filters))).order_by(Employee.created_at.desc()).offset(skip).limit(limit).all()
+    list = db.query(Employee).filter(and_(*state_filters, or_(*str_filters))
+                                     ).order_by(Employee.created_at.desc()).offset(skip).limit(limit).all()
+
+    return {"docs": list, "total": total} if include_total == True else list
 
 
 @router.post("")
