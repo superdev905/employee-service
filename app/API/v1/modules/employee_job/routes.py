@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm.session import Session
@@ -27,6 +28,31 @@ def overloaded_get_all(skip: int = None,
         filters.append(EmployeeJob.employee_id == employee_id)
     filters.append(EmployeeJob.state == "CREATED")
     return db.query(EmployeeJob).filter(*filters).offset(skip).limit(limit).all()
+
+
+@router.put('/{item_id}')
+def update_one(item_id: int, update_body: EmployeeJobCreate, db: Session = Depends(get_database)):
+    found_job = db.query(EmployeeJob).filter(
+        EmployeeJob.id == item_id).first()
+    if not found_job:
+        raise HTTPException(
+            status_code=400, detail="Este trabajo no existe")
+
+    obj_data = jsonable_encoder(found_job)
+
+    if isinstance(update_body, dict):
+        update_data = update_body
+    else:
+        update_data = update_body.dict(exclude_unset=True)
+    for field in obj_data:
+        if field in update_data:
+            setattr(found_job, field, update_data[field])
+
+    db.add(found_job)
+    db.commit()
+    db.refresh(found_job)
+
+    return found_job
 
 
 @router.patch('/{item_id}')

@@ -21,7 +21,8 @@ class EmployeeJobCreate(BaseModel):
 
     class Config:
         orm_mode = True
-        require_by_default = False
+        default_by_required = False
+
 
 class EmployeeJobPatch(BaseModel):
     state: str
