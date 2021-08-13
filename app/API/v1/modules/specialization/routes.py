@@ -36,7 +36,7 @@ def overloaded_get_all(skip: int = 0,
 
 
 @router.put('/{item_id}')
-def update_one(item_id: int, update_body: SpecializationPatch, db: Session = Depends(get_database)):
+def update_one(item_id: int, update_body: SpecializationCreate, db: Session = Depends(get_database)):
     found_obj = db.query(Specialization).filter(
         Specialization.id == item_id).first()
     if not found_obj:
@@ -57,6 +57,7 @@ def update_one(item_id: int, update_body: SpecializationPatch, db: Session = Dep
     db.refresh(found_obj)
 
     return found_obj
+
 
 @router.patch('/{item_id}')
 def block_one(item_id: int, patch_body: SpecializationPatch, db: Session = Depends(get_database)):
