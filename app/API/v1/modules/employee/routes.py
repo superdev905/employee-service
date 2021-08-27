@@ -31,7 +31,7 @@ def get_all(skip: int = 0, limit: int = 30,
         state_filters.append(Employee.state == state)
     str_filters = []
     if(search):
-        formatted_search = "%{}%".format(search)
+        formatted_search = "{}%".format(search)
 
         str_filters.append(Employee.names.ilike(formatted_search))
         str_filters.append(Employee.paternal_surname.ilike(formatted_search))
