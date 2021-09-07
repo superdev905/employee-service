@@ -23,7 +23,7 @@ class EmployeeJob(Base):
     leave_motive = Column(String(120))
     salary = Column(Float, nullable=False)
     state = Column(String(7), nullable=False, default="CREATED")
-    created_by = Column(String(20), default="Jhon Doe")
+    created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())
     update_at = Column(DateTime(timezone=True),

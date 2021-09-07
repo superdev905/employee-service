@@ -15,34 +15,26 @@ class Employee(Base):
     maternal_surname = Column(String(120), nullable=False)
     born_date = Column(DateTime, nullable=False)
     gender = Column(String(50), nullable=False)
-    marital_status_id = Column(Integer, ForeignKey(
-        'marital_status.id', ondelete='cascade'))
-    scholarship_id = Column(Integer, ForeignKey(
-        'scholarship.id', ondelete='cascade'))
+    marital_status_id = Column(Integer, nullable=False)
+    scholarship_id = Column(Integer, nullable=False)
     disability = Column(String(2), nullable=False)
     credential_disability = Column(String(2), nullable=False)
     recognize = Column(String(2), nullable=False, default="NO")
-    nationality_id = Column(Integer, ForeignKey(
-        'nationality.id', ondelete='cascade'))
+    nationality_id = Column(Integer, nullable=False)
     alive = Column(String(2), nullable=False)
-    bank_id = Column(Integer, ForeignKey(
-        'bank.id', ondelete='cascade'), nullable=True)
+    bank_id = Column(Integer, nullable=False)
     account_type = Column(String(100))
     account_number = Column(String(100))
     rsh = Column(String(100))
     rsh_percentage = Column(String(100))
     state = Column(String(7), nullable=False,
                    default="CREATED", server_default="CREATED")
-    created_by = Column(String(20), default="Jhon Doe")
+    created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())
     update_at = Column(DateTime(timezone=True),
                        nullable=False,
                        onupdate=func.now(), server_default=func.now())
-    marital_status = relationship('MaritalStatus', uselist=False)
-    scholarship = relationship('Scholarship', uselist=False)
-    nationality = relationship('Nationality', uselist=False)
-    bank = relationship('Bank', uselist=False)
     contacts = relationship(
         "EmployeeContact", back_populates="employee", lazy="select")
     relatives = relationship(

@@ -16,7 +16,9 @@ class EmployeeContact(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     region_id = Column(Integer, nullable=False)
-    commune_id = Column(Integer, nullable=False)
+    region_id = Column(Integer, nullable=False)
+    region = Column(Integer, nullable=False)
+    commune = Column(Integer, nullable=False)
     housing_group = Column(String(255))
     block = Column(String(255))
     department = Column(String(255))
@@ -28,7 +30,7 @@ class EmployeeContact(Base):
     state = Column(String(7), nullable=False, default="CREATED")
     is_main = Column(Boolean, nullable=False, default=True)
     confirmation_date = Column(DateTime, nullable=False)
-    created_by = Column(String(20), default="Jhon Doe")
+    created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())
     update_at = Column(DateTime(timezone=True),

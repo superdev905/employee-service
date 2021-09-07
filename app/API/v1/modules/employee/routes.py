@@ -60,10 +60,7 @@ def overloaded_create_one(employee: EmployeeCreate, db: Session = Depends(get_da
 @router.get("/{item_id}")
 def get_one(item_id: int = None, db: Session = Depends(get_database)):
     found_employee = db.query(Employee).filter(
-        Employee.id == item_id).options(joinedload(Employee.nationality),
-                                        joinedload(Employee.bank),
-                                        joinedload(Employee.marital_status),
-                                        joinedload(Employee.scholarship)).first()
+        Employee.id == item_id).first()
     if not found_employee:
         raise HTTPException(
             status_code=400, detail="Este trabajador no existe")

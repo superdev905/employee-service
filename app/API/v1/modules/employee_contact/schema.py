@@ -12,7 +12,9 @@ class EmployeeContactCreate(BaseModel):
     latitude: float
     longitude: float
     region_id: int
+    region: str
     commune_id: int
+    commune: str
     housing_group: Optional[str]
     block: Optional[str]
     department: Optional[str]
