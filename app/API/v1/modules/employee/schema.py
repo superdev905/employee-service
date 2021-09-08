@@ -26,6 +26,7 @@ class EmployeeCreate(BaseModel):
     state: Optional[str]
     rsh: str
     rsh_percentage: Optional[str]
+    created_by: int
 
     class Config:
         orm_mode = True
@@ -48,7 +49,8 @@ class EmployeeCreate(BaseModel):
                 "account_type": "CUENTA CORRIENTE",
                 "account_number": fake.bban(),
                 "rsh": "NO",
-                "rsh_percentage": "T"
+                "rsh_percentage": "T",
+                "created_by": int
             }
         }
 
