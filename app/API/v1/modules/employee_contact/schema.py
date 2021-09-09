@@ -12,9 +12,7 @@ class EmployeeContactCreate(BaseModel):
     latitude: float
     longitude: float
     region_id: int
-    region: str
     commune_id: int
-    commune: str
     housing_group: Optional[str]
     block: Optional[str]
     department: Optional[str]
@@ -27,6 +25,7 @@ class EmployeeContactCreate(BaseModel):
     state: Optional[str]
     is_main: bool
     confirmation_date: datetime
+    created_by: int
 
     class Config:
         orm_mode = True

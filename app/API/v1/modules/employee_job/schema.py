@@ -18,6 +18,7 @@ class EmployeeJobCreate(BaseModel):
     leave_motive: Optional[str] = None
     salary: float
     state: Optional[str]
+    created_by: int
 
     class Config:
         orm_mode = True

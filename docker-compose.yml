@@ -8,6 +8,8 @@ services:
       - .:/app
     ports:
       - 8000:8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   db:
     image: postgres:13-alpine
     volumes:

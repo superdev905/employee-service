@@ -1,13 +1,12 @@
 from typing import Optional
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from .model import PensionSituation
 from .schema import PensionSituation as PensionSituationSchema, PensionSituationCreate, PensionSituationPatch
-
+from ...helpers.fetch_data import fetch_parameter_data
 
 router = SQLAlchemyCRUDRouter(
     schema=PensionSituationSchema,
@@ -27,9 +26,17 @@ def overloaded_get_all(skip: int = None,
     if employee_id:
         filters.append(PensionSituation.employee_id == employee_id)
     filters.append(PensionSituation.state != "DELETED")
-    return db.query(PensionSituation).filter(*filters).options(
-        joinedload(PensionSituation.afp_isp),
-        joinedload(PensionSituation.isapre_fonasa)).offset(skip).limit(limit).all()
+
+    result = []
+    list = db.query(PensionSituation).filter(
+        *filters).offset(skip).limit(limit).all()
+    for item in list:
+        afp_isp = fetch_parameter_data(item.afp_isp_id, "afp-isp")
+        isapre_fonasa = fetch_parameter_data(item.afp_isp_id, "isapre-fonasa")
+        result.append({**item.__dict__,
+                       "afp_isp": afp_isp,
+                       "isapre_fonasa": isapre_fonasa})
+    return result
 
 
 @router.patch('/{item_id}')

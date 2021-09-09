@@ -1,13 +1,12 @@
 from typing import Optional
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from .model import HousingSituation
 from .schema import HousingSituation as HousingSituationSchema, HousingSituationCreate, HousingSituationPatch
-
+from ...helpers.fetch_data import fetch_parameter_data
 
 router = SQLAlchemyCRUDRouter(
     schema=HousingSituationSchema,
@@ -27,10 +26,20 @@ def overloaded_get_all(skip: int = 0,
     if employee_id:
         filters.append(HousingSituation.employee_id == employee_id)
     filters.append(HousingSituation.state != "DELETED")
-    return db.query(HousingSituation).filter(*filters).options(
-        joinedload(HousingSituation.type_home),
-        joinedload(HousingSituation.property_home),
-        joinedload(HousingSituation.type_subsidy)).offset(skip).limit(limit).all()
+    result = []
+    list = db.query(HousingSituation).filter(
+        *filters).offset(skip).limit(limit).all()
+    for item in list:
+        type_home = fetch_parameter_data(item.type_home_id, "types-home")
+        property_home = fetch_parameter_data(
+            item.property_home_id, "property-home")
+        type_subsidy = fetch_parameter_data(
+            item.type_subsidy_id, "types-subsidy")
+        result.append({**item.__dict__,
+                       "type_home": type_home,
+                       "property_home": property_home,
+                       "type_subsidy": type_subsidy})
+    return result
 
 
 @router.patch('/{item_id}')

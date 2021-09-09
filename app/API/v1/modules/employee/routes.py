@@ -1,3 +1,4 @@
+
 from typing import Optional
 from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
@@ -7,9 +8,10 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.elements import and_, or_
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
+from app.settings import SERVICES
 from .model import Employee
 from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch
-
+from .services import get_bank, get_marital_status, fetch_data
 
 router = SQLAlchemyCRUDRouter(
     schema=EmployeeSchema,
@@ -65,7 +67,11 @@ def get_one(item_id: int = None, db: Session = Depends(get_database)):
         raise HTTPException(
             status_code=400, detail="Este trabajador no existe")
 
-    return found_employee
+    return {**found_employee.__dict__,
+            "bank": get_bank(found_employee.bank_id),
+            "marital_status": get_marital_status(found_employee.marital_status_id),
+            "nationality": fetch_data(found_employee.nationality_id, "nationalities"),
+            "scholarship": fetch_data(found_employee.scholarship_id, "scholarship")}
 
 
 @router.put("/{item_id}")

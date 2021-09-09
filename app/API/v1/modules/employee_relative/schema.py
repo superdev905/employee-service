@@ -25,6 +25,7 @@ class EmployeeRelativeCreate(BaseModel):
     rsh_percentage_id: Optional[int] = None
     state: Optional[str]
     is_main: Optional[bool]
+    created_by: int
 
     class Config:
         orm_mode = True

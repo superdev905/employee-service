@@ -87,11 +87,7 @@ def overloaded_get_all(skip: int = None,
     if employee_run:
         filters.append(EmployeeRelative.employee_run == employee_run)
 
-    return db.query(EmployeeRelative).filter(*filters).options(
-        joinedload(EmployeeRelative.marital_status),
-        joinedload(EmployeeRelative.scholarship),
-        joinedload(EmployeeRelative.nationality),
-        joinedload(EmployeeRelative.job)).offset(skip).limit(limit).all()
+    return db.query(EmployeeRelative).filter(*filters).offset(skip).limit(limit).all()
 
 
 @router.patch('/{item_id}/block')

@@ -8,7 +8,7 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from .model import Specialization
 from .schema import Specialization as SpecializationSchema, SpecializationCreate, SpecializationPatch
-
+from ...helpers.fetch_data import fetch_parameter_data
 
 router = SQLAlchemyCRUDRouter(
     schema=SpecializationSchema,
@@ -28,11 +28,18 @@ def overloaded_get_all(skip: int = 0,
     if employee_id:
         filters.append(Specialization.employee_id == employee_id)
     filters.append(Specialization.state == "CREATED")
+    result = []
+    query_list = db.query(Specialization).filter(
+        *filters).offset(skip).limit(limit).all()
+    for item in query_list:
+        entity = fetch_parameter_data(
+            item.certifying_entity_id, "entities") if item.certifying_entity_id else None
+        result.append({**item.__dict__,
+                       "specialty": fetch_parameter_data(item.specialty_id, "specialties"),
+                       "specialty_detail": fetch_parameter_data(item.specialty_detail_id, "sub-specialties"),
+                       "certifying_entity": entity})
 
-    return db.query(Specialization).filter(*filters).options(
-        joinedload(Specialization.specialty),
-        joinedload(Specialization.specialty_detail),
-        joinedload(Specialization.certifying_entity)).offset(skip).limit(limit).all()
+    return result
 
 
 @router.put('/{item_id}')

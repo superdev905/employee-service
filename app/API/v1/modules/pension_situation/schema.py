@@ -7,10 +7,11 @@ class PensionSituationCreate(BaseModel):
     isapre_fonasa_id: int
     afp_isp_id: int
     is_pensioner: str
-    pension_amount: Optional[float]   
+    pension_amount: Optional[float]
     belongs_to_recognize: str
     is_main: Optional[bool]
     state: Optional[str]
+    created_by: int
 
     class Config:
         orm_mode = True
@@ -20,8 +21,9 @@ class PensionSituationCreate(BaseModel):
                 "isapre_fonasa_id": 1,
                 "afp_isp_id": 1,
                 "is_pensioner": "NO",
-                "belongs_to_recognize" : "NO",
+                "belongs_to_recognize": "NO",
                 "pension_amount": 10000,
+                "created_by": 1
             }
         }
 

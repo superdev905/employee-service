@@ -10,6 +10,7 @@ class HousingSituationCreate(BaseModel):
     description: str
     is_main: Optional[bool]
     state: Optional[str]
+    created_by: int
 
     class Config:
         orm_mode = True
@@ -20,6 +21,7 @@ class HousingSituationCreate(BaseModel):
                 "property_home_id": 1,
                 "type_subsidy_id": 1,
                 "description": "Description",
+                "created_by": 1
             }
         }
 

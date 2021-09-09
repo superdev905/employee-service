@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
-from sqlalchemy.sql.base import NO_ARG
 
 
 class SpecializationCreate(BaseModel):
@@ -12,8 +11,10 @@ class SpecializationCreate(BaseModel):
     certifying_entity_id: Optional[int] = None
     is_certificated: str
     certification_url: Optional[str] = ''
+    file_key: Optional[str] = ''
     certificated_date: Optional[datetime] = None
     state: Optional[str]
+    created_by: int
 
     class Config:
         orm_mode = True

@@ -7,7 +7,7 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from .model import EmployeeContact
 from .schema import EmployeeContact as EmployeeContactSchema, EmployeeContactCreate, EmployeeContactPatch
-
+from ...helpers.fetch_data import fetch_parameter_data
 
 router = SQLAlchemyCRUDRouter(
     schema=EmployeeContactSchema,
@@ -19,15 +19,25 @@ router = SQLAlchemyCRUDRouter(
 
 
 @router.get("")
-def overloaded_get_all(skip: int = None,
-                       limit: int = None,
-                       employee_run: Optional[str] = None,
-                       db: Session = Depends(get_database)):
+def get_all(skip: int = None,
+            limit: int = None,
+            employee_run: Optional[str] = None,
+            db: Session = Depends(get_database)):
     filters = []
     if employee_run:
         filters.append(EmployeeContact.employee_run == employee_run)
     filters.append(EmployeeContact.state != "DELETED")
-    return db.query(EmployeeContact).filter(*filters).offset(skip).limit(limit).all()
+
+    result = []
+    list = db.query(EmployeeContact).filter(
+        *filters).offset(skip).limit(limit).all()
+
+    for item in list:
+        result.append(
+            {**item.__dict__,
+             "region": fetch_parameter_data(item.region_id, "regions"),
+             "commune": fetch_parameter_data(item.commune_id, "communes")})
+    return result
 
 
 @router.post("")
