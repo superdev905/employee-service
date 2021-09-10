@@ -9,16 +9,5 @@ services:
       - .:/app
     ports:
       - 5104:80
-  db:
-    restart: unless-stopped
-    image: postgres:13-alpine
-    volumes:
-      - employees_data:/var/lib/postgresql/data/
-    expose:
-      - 5432
-    environment:
-      - POSTGRES_USER=Anakin
-      - POSTGRES_PASSWORD=Anakin4
-      - POSTGRES_DB=employees
-volumes:
-  employees_data:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
