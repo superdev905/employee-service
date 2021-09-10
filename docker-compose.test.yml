@@ -3,6 +3,7 @@ version: "3"
 services:
   employee-api-test:
     build: .
+    container_name: employee-test
     restart: unless-stopped
     command: bash -c "alembic upgrade head && uvicorn app.main:app --workers 1 --host 0.0.0.0 --port 80"
     volumes:

@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.API.v1 import router as V1_Routes
 from app.API.v1.seeds.init import seed_base_data
 from app.database.main import get_database
