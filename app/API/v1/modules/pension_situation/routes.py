@@ -32,7 +32,8 @@ def overloaded_get_all(skip: int = None,
         *filters).offset(skip).limit(limit).all()
     for item in list:
         afp_isp = fetch_parameter_data(item.afp_isp_id, "afp-isp")
-        isapre_fonasa = fetch_parameter_data(item.afp_isp_id, "isapre-fonasa")
+        isapre_fonasa = fetch_parameter_data(
+            item.isapre_fonasa_id, "isapre-fonasa")
         result.append({**item.__dict__,
                        "afp_isp": afp_isp,
                        "isapre_fonasa": isapre_fonasa})
