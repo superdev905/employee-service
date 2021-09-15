@@ -24,7 +24,7 @@ class EmployeeRelative(Base):
     relationship_id = Column(Integer, nullable=False)
     legal_charge = Column(String(2), nullable=False)
     rsh = Column(String(2))
-    rsh_percentage_id = Column(Integer, nullable=False)
+    rsh_percentage_id = Column(Integer)
     state = Column(String(7), nullable=False, default="CREATED")
     is_main = Column(Boolean, nullable=False, default=True)
     created_by = Column(Integer, nullable=False)
