@@ -34,4 +34,4 @@ class EmployeeRelative(Base):
                        nullable=False,
                        onupdate=func.now(), server_default=func.now())
     employee = relationship(
-        "Employee", back_populates="relatives", foreign_keys=[employee_run], lazy="joined")
+        "Employee", back_populates="relatives", foreign_keys=[employee_run], lazy="select")

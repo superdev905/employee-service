@@ -4,7 +4,7 @@ from app.API.v1 import router as V1_Routes
 from app.API.v1.seeds.init import seed_base_data
 from app.database.main import get_database
 
-app = FastAPI(title="Employee service")
+app = FastAPI(title="Servicio de trabajadores")
 
 app.include_router(V1_Routes.router, prefix="/api/v1")
 

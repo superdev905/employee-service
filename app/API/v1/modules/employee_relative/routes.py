@@ -7,6 +7,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import and_
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
+from ...helpers.fetch_data import fetch_parameter_data
 from .model import EmployeeRelative
 from .schema import EmployeeRelative as EmployeeRelativeSchema, EmployeeRelativeCreate
 
@@ -30,6 +31,22 @@ def is_run_taken(db: Session, run: str, excluded_id: int):
     filters.append(EmployeeRelative.run == run)
     print(filters)
     return bool(db.query(EmployeeRelative).filter(and_(*filters)).first())
+
+
+@router.get("/{item_id}")
+def get_one(item_id: int, db: Session = Depends(get_database)):
+
+    db_obj = db.query(EmployeeRelative).filter(
+        EmployeeRelative.id == item_id).first()
+
+    if not db_obj:
+        raise HTTPException(
+            status_code=400, detail="Este familiar no está registrado")
+
+    relationship = fetch_parameter_data(
+        db_obj.relationship_id, "relationships")
+
+    return {**db_obj.__dict__, "relationship": relationship["description"]}
 
 
 @router.post("")
