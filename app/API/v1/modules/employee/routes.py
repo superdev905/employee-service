@@ -9,6 +9,7 @@ from sqlalchemy.sql.elements import and_, or_
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from app.settings import SERVICES
+from ..employee_job.model import EmployeeJob
 from .model import Employee
 from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch
 from .services import get_bank, get_marital_status, fetch_data
@@ -66,12 +67,15 @@ def get_one(item_id: int = None, db: Session = Depends(get_database)):
     if not found_employee:
         raise HTTPException(
             status_code=400, detail="Este trabajador no existe")
+    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id == item_id,
+                                                    EmployeeJob.state != "DELETED")).order_by(EmployeeJob.created_at.desc()).first()
 
     return {**found_employee.__dict__,
             "bank": get_bank(found_employee.bank_id),
             "marital_status": get_marital_status(found_employee.marital_status_id),
             "nationality": fetch_data(found_employee.nationality_id, "nationalities"),
-            "scholarship": fetch_data(found_employee.scholarship_id, "scholarship")}
+            "scholarship": fetch_data(found_employee.scholarship_id, "scholarship"),
+            "current_job": current_job}
 
 
 @router.put("/{item_id}")
