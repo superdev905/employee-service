@@ -10,6 +10,8 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from app.settings import SERVICES
 from ..employee_job.model import EmployeeJob
+from ..housing_situation.model import HousingSituation
+from ..pension_situation.model import PensionSituation
 from .model import Employee
 from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch
 from .services import get_bank, get_marital_status, fetch_data
@@ -69,13 +71,19 @@ def get_one(item_id: int = None, db: Session = Depends(get_database)):
             status_code=400, detail="Este trabajador no existe")
     current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id == item_id,
                                                     EmployeeJob.state != "DELETED")).order_by(EmployeeJob.created_at.desc()).first()
+    house_status = db.query(HousingSituation).filter(and_(HousingSituation.employee_id == item_id,
+                                                          HousingSituation.state != "DELETED")).order_by(HousingSituation.created_at.desc()).first()
+    pension_status = db.query(PensionSituation).filter(and_(PensionSituation.employee_id == item_id,
+                                                            PensionSituation.state != "DELETED")).order_by(PensionSituation.created_at.desc()).first()
 
     return {**found_employee.__dict__,
             "bank": get_bank(found_employee.bank_id),
             "marital_status": get_marital_status(found_employee.marital_status_id),
             "nationality": fetch_data(found_employee.nationality_id, "nationalities"),
             "scholarship": fetch_data(found_employee.scholarship_id, "scholarship"),
-            "current_job": current_job}
+            "current_job": current_job,
+            "house_status": house_status,
+            "pension_status": pension_status}
 
 
 @router.put("/{item_id}")
