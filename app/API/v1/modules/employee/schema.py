@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 from pydantic import BaseModel
 from faker import Faker
 
@@ -10,7 +10,7 @@ class EmployeeCreate(BaseModel):
     run: str
     names: str
     paternal_surname: str
-    maternal_surname: str
+    maternal_surname: Optional[str]
     born_date: datetime
     gender: str
     marital_status_id: int
@@ -27,6 +27,7 @@ class EmployeeCreate(BaseModel):
     rsh: str
     rsh_percentage: Optional[str]
     created_by: int
+    rsh_status: Optional[Literal["REALIZADO", "EN TRÁMITE", "EN TRAMITE"]]
 
     class Config:
         orm_mode = True

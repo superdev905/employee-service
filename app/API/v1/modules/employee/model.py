@@ -12,7 +12,7 @@ class Employee(Base):
     run = Column(String(12), nullable=False, unique=True, primary_key=True)
     names = Column(String(120), nullable=False)
     paternal_surname = Column(String(120), nullable=False)
-    maternal_surname = Column(String(120), nullable=False)
+    maternal_surname = Column(String(120), nullable=True)
     born_date = Column(DateTime, nullable=False)
     gender = Column(String(50), nullable=False)
     marital_status_id = Column(Integer, nullable=False)
@@ -27,6 +27,7 @@ class Employee(Base):
     account_number = Column(String(100))
     rsh = Column(String(100))
     rsh_percentage = Column(String(100))
+    rsh_status = Column(String(10))
     state = Column(String(7), nullable=False,
                    default="CREATED", server_default="CREATED")
     created_by = Column(Integer, nullable=False)
