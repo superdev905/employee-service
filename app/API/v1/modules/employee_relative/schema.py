@@ -26,13 +26,15 @@ class EmployeeRelativeCreate(BaseModel):
     state: Optional[str]
     is_main: Optional[bool]
     created_by: int
+    phone: Optional[str]
 
     class Config:
         orm_mode = True
         schema_extra = {
             "example": {
                 "employee_id": 1,
-                "legal_charge": "NO"
+                "legal_charge": "NO",
+                "phone": '999990099'
             }
         }
 
