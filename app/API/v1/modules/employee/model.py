@@ -28,6 +28,8 @@ class Employee(Base):
     rsh = Column(String(100))
     rsh_percentage = Column(String(100))
     rsh_status = Column(String(10))
+    disability_type = Column(String(28))
+    disability_percentage = Column(String(40))
     state = Column(String(7), nullable=False,
                    default="CREATED", server_default="CREATED")
     created_by = Column(Integer, nullable=False)
