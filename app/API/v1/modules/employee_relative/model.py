@@ -25,6 +25,7 @@ class EmployeeRelative(Base):
     legal_charge = Column(String(2), nullable=False)
     rsh = Column(String(2))
     rsh_percentage_id = Column(Integer)
+    rsh_status = Column(String(10))
     phone = Column(String(9))
     state = Column(String(7), nullable=False, default="CREATED")
     is_main = Column(Boolean, nullable=False, default=True)

@@ -1,7 +1,6 @@
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 from pydantic import BaseModel
-from sqlalchemy.orm import relationship
 from faker import Faker
 
 fake = Faker()
@@ -23,6 +22,7 @@ class EmployeeRelativeCreate(BaseModel):
     job_id: int
     rsh: Optional[str]
     rsh_percentage_id: Optional[int] = None
+    rsh_status: Optional[Literal["REALIZADO", "EN TRÁMITE", "EN TRAMITE"]]
     state: Optional[str]
     is_main: Optional[bool]
     created_by: int
