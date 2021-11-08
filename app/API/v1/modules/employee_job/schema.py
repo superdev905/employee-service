@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class EmployeeJobCreate(BaseModel):
+class EmployeeJobBase(BaseModel):
     employee_id: int
     admission_date: datetime
     business_id: int
@@ -18,11 +18,26 @@ class EmployeeJobCreate(BaseModel):
     leave_motive: Optional[str] = None
     salary: float
     state: Optional[str]
+    specialty_id: int
+    specialty_name: Optional[str]
+    specialty_detail_id: int
+    specialty_detail_name: Optional[str]
     created_by: int
 
     class Config:
         orm_mode = True
         default_by_required = False
+
+
+class EmployeeJobCreate(EmployeeJobBase):
+    pass
+
+
+class EmployeeJobItem(EmployeeJobBase):
+    id: int
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 class EmployeeJobPatch(BaseModel):
@@ -32,5 +47,5 @@ class EmployeeJobPatch(BaseModel):
         orm_mode = True
 
 
-class EmployeeJob (EmployeeJobCreate):
+class EmployeeJob (EmployeeJobBase):
     id: int

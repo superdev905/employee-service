@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
@@ -6,7 +6,7 @@ from sqlalchemy.orm.session import Session
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from .model import EmployeeJob
-from .schema import EmployeeJob as EmployeeJobSchema, EmployeeJobCreate, EmployeeJobPatch
+from .schema import EmployeeJob as EmployeeJobSchema, EmployeeJobItem, EmployeeJobCreate, EmployeeJobPatch
 
 
 router = SQLAlchemyCRUDRouter(
@@ -18,7 +18,7 @@ router = SQLAlchemyCRUDRouter(
 )
 
 
-@router.get("")
+@router.get("", response_model=List[EmployeeJobItem])
 def overloaded_get_all(skip: int = None,
                        limit: int = None,
                        employee_id: Optional[str] = None,

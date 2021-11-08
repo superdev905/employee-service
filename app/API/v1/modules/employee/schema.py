@@ -6,7 +6,7 @@ from faker import Faker
 fake = Faker()
 
 
-class EmployeeCreate(BaseModel):
+class EmployeeBase(BaseModel):
     run: str
     names: str
     paternal_surname: str
@@ -38,6 +38,10 @@ class EmployeeCreate(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class EmployeeCreate(EmployeeBase):
+    class Config:
         schema_extra = {
             "example": {
                 "run": "14.643.954-3",
@@ -61,6 +65,14 @@ class EmployeeCreate(BaseModel):
                 "created_by": int
             }
         }
+
+
+class EmployeeItem(EmployeeBase):
+    int: str
+
+    class Config:
+        orm_mode = True
+        default_by_required = False
 
 
 class EmployeePatch (BaseModel):
