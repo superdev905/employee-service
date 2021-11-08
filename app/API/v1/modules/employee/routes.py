@@ -55,6 +55,12 @@ def get_all(skip: int = 0, limit: int = 30,
 
 @router.post("")
 def overloaded_create_one(employee: EmployeeCreate, db: Session = Depends(get_database)):
+    found_employee = db.query(Employee).filter(
+        Employee.run == employee.run).first()
+    if not found_employee:
+        raise HTTPException(
+            status_code=400, detail="Este run ya esta registrado")
+
     saved_employee = Employee(**jsonable_encoder(employee))
     db.add(saved_employee)
     db.commit()
