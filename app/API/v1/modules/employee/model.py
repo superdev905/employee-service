@@ -22,7 +22,7 @@ class Employee(Base):
     recognize = Column(String(2), nullable=False, default="NO")
     nationality_id = Column(Integer, nullable=False)
     alive = Column(String(2), nullable=False)
-    bank_id = Column(Integer, nullable=False)
+    bank_id = Column(Integer)
     account_type = Column(String(100))
     account_number = Column(String(100))
     rsh = Column(String(100))
