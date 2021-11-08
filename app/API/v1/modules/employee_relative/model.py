@@ -14,7 +14,7 @@ class EmployeeRelative(Base):
     run = Column(String(12))
     names = Column(String(255), nullable=False)
     paternal_surname = Column(String(120), nullable=False)
-    maternal_surname = Column(String(120), nullable=False)
+    maternal_surname = Column(String(120))
     born_date = Column(DateTime, nullable=False)
     gender = Column(String(50), nullable=False)
     marital_status_id = Column(Integer, nullable=False)

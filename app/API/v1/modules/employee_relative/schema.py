@@ -22,7 +22,7 @@ class EmployeeRelativeCreate(BaseModel):
     job_id: int
     rsh: Optional[str]
     rsh_percentage_id: Optional[int] = None
-    rsh_status: Optional[Literal["REALIZADO", "EN TRÁMITE", "EN TRAMITE"]]
+    rsh_status: Optional[Literal["", "REALIZADO", "EN TRÁMITE", "EN TRAMITE"]]
     state: Optional[str]
     is_main: Optional[bool]
     created_by: int
