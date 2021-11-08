@@ -75,9 +75,10 @@ def get_one(item_id: int = None, db: Session = Depends(get_database)):
                                                           HousingSituation.state != "DELETED")).order_by(HousingSituation.created_at.desc()).first()
     pension_status = db.query(PensionSituation).filter(and_(PensionSituation.employee_id == item_id,
                                                             PensionSituation.state != "DELETED")).order_by(PensionSituation.created_at.desc()).first()
-
+    bank_details = get_bank(
+        found_employee.bank_id) if found_employee.bank_id else None
     return {**found_employee.__dict__,
-            "bank": get_bank(found_employee.bank_id),
+            "bank": bank_details,
             "marital_status": get_marital_status(found_employee.marital_status_id),
             "nationality": fetch_data(found_employee.nationality_id, "nationalities"),
             "scholarship": fetch_data(found_employee.scholarship_id, "scholarship"),
