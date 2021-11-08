@@ -27,13 +27,13 @@ class EmployeeCreate(BaseModel):
     rsh: str
     rsh_percentage: Optional[str]
     created_by: int
-    rsh_status: Optional[Literal["REALIZADO", "EN TRÁMITE", "EN TRAMITE"]]
-    disability_type: Optional[Literal[
-        'DISCAPACIDAD FISICA O MOTORA',
-        'DISCAPACIDAD SENSORIAL',
-        'DISCAPACIDAD INTELECTUAL',
-        'DISCAPACIDAD PSÍQUICA'
-    ]]
+    rsh_status: Optional[Literal["", "REALIZADO", "EN TRÁMITE", "EN TRAMITE"]]
+    disability_type: Optional[Literal["",
+                                      'DISCAPACIDAD FISICA O MOTORA',
+                                      'DISCAPACIDAD SENSORIAL',
+                                      'DISCAPACIDAD INTELECTUAL',
+                                      'DISCAPACIDAD PSÍQUICA'
+                                      ]]
     disability_percentage: Optional[str]
 
     class Config:
