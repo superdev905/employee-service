@@ -6,3 +6,4 @@ from ..API.v1.modules.pension_situation.model import PensionSituation
 from ..API.v1.modules.housing_situation.model import HousingSituation
 from ..API.v1.modules.specialization.model import Specialization
 from ..API.v1.modules.employee_job.model import EmployeeJob
+from ..API.v1.modules.attachment.model import Attachment

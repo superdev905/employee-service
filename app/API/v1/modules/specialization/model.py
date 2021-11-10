@@ -1,7 +1,7 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Boolean, DateTime
+from sqlalchemy.sql.sqltypes import DateTime
 from app.database.base_class import Base
 from sqlalchemy import Column, Integer, String
 
@@ -16,8 +16,7 @@ class Specialization(Base):
     is_self_taught = Column(String(2), nullable=False)
     certifying_entity_id = Column(Integer)
     is_certificated = Column(String(2))
-    certification_url = Column(String(1024))
-    file_key = Column(String(500))
+    certification_file_id = Column(Integer, ForeignKey("attachment.id"))
     certificated_date = Column(DateTime)
     state = Column(String(7), nullable=False, default="CREATED")
     created_by = Column(Integer, nullable=False)
@@ -26,5 +25,6 @@ class Specialization(Base):
     update_at = Column(DateTime(timezone=True),
                        nullable=False,
                        onupdate=func.now(), server_default=func.now())
-    employee = relationship(
-        "Employee",  uselist=False, lazy="select")
+    employee = relationship("Employee",  uselist=False, lazy="select")
+    certification_file = relationship(
+        "Attachment",  uselist=False, lazy="joined")

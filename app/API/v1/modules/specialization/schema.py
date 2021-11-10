@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
+from ..attachment.schema import AttachmentCreate
 
 
 class SpecializationCreate(BaseModel):
@@ -10,11 +11,10 @@ class SpecializationCreate(BaseModel):
     is_self_taught: str
     certifying_entity_id: Optional[int] = None
     is_certificated: str
-    certification_url: Optional[str] = ''
-    file_key: Optional[str] = ''
     certificated_date: Optional[datetime] = None
     state: Optional[str]
     created_by: int
+    certification_file: Optional[AttachmentCreate]
 
     class Config:
         orm_mode = True

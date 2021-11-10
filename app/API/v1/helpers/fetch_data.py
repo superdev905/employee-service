@@ -18,3 +18,11 @@ def fetch_parameter_data(id: int, endpoint: str) -> object:
         'GET', SERVICES["parameters"]+'/'+endpoint+'/'+str(id))
 
     return handle_response(response)
+
+
+def delete_file_from_store(file_key: str):
+    user_req = http.request(
+        'DELETE', SERVICES["parameters"]+"/file/delete/"+file_key)
+    result = handle_response(user_req)
+
+    return result

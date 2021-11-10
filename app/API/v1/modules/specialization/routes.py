@@ -9,6 +9,9 @@ from app.database.main import get_database
 from .model import Specialization
 from .schema import Specialization as SpecializationSchema, SpecializationCreate, SpecializationPatch
 from ...helpers.fetch_data import fetch_parameter_data
+from ...helpers.crud import get_updated_obj
+from ..attachment.services import delete_attachment, save_attachment
+
 
 router = SQLAlchemyCRUDRouter(
     schema=SpecializationSchema,
@@ -42,28 +45,58 @@ def overloaded_get_all(skip: int = 0,
     return result
 
 
+@router.post('')
+def create(body: SpecializationCreate, db: Session = Depends(get_database)):
+
+    obj_data = jsonable_encoder(body)
+    if body.certification_file:
+        file = save_attachment(db, body.certification_file, body.created_by)
+        obj_data["certification_file_id"] = file.id
+
+    del obj_data["certification_file"]
+
+    saved_data = Specialization(**obj_data)
+
+    db.add(saved_data)
+    db.commit()
+    db.refresh(saved_data)
+
+    return saved_data
+
+
 @router.put('/{item_id}')
-def update_one(item_id: int, update_body: SpecializationCreate, db: Session = Depends(get_database)):
+async def update_one(item_id: int, body: SpecializationCreate, db: Session = Depends(get_database)):
     found_obj = db.query(Specialization).filter(
         Specialization.id == item_id).first()
     if not found_obj:
         raise HTTPException(
             status_code=400, detail="Este registro no existe")
 
-    obj_data = jsonable_encoder(found_obj)
+    updated_body = jsonable_encoder(body)
+    old_attachment = None
+    new_attachment = None
+    has_delete_attachment = False
 
-    if isinstance(update_body, dict):
-        update_data = update_body
-    else:
-        update_data = update_body.dict(exclude_unset=True)
-    for field in obj_data:
-        if field in update_data:
-            setattr(found_obj, field, update_data[field])
-    db.add(found_obj)
+    if body.certification_file:
+        if found_obj.certification_file.file_key != body.certification_file.file_key:
+            old_attachment = found_obj.certification_file
+            has_delete_attachment = True
+            new_attachment = save_attachment(
+                db, body.certification_file, body.created_by)
+
+    del updated_body["certification_file"]
+
+    updated_spec = get_updated_obj(found_obj, updated_body)
+    if (has_delete_attachment and new_attachment):
+        updated_spec.certification_file_id = new_attachment.id
+    db.add(updated_spec)
     db.commit()
-    db.refresh(found_obj)
+    db.refresh(updated_spec)
 
-    return found_obj
+    if(has_delete_attachment and old_attachment):
+        delete_attachment(old_attachment)
+
+    return updated_spec
 
 
 @router.patch('/{item_id}')
