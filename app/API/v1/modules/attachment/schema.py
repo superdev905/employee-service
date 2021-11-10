@@ -23,3 +23,5 @@ class AttachmentCreate(AttachmentBase):
 
 class AttachmentItem(AttachmentBase):
     id: int
+    is_active: Optional[bool]
+    module: str

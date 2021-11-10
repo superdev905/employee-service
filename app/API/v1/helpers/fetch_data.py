@@ -26,3 +26,13 @@ def delete_file_from_store(file_key: str):
     result = handle_response(user_req)
 
     return result
+
+
+def fetch_service(token: str, route: str) -> str:
+    user_req = http.request(
+        'GET', route,  headers={
+            "Authorization": "Bearer %s" % token
+        })
+    result = handle_response(user_req)
+
+    return result

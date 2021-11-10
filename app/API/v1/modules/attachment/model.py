@@ -1,5 +1,5 @@
 from sqlalchemy.sql.functions import func
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import Boolean, DateTime
 from app.database.base_class import Base
 from sqlalchemy import Column, Integer, String
 
@@ -14,6 +14,7 @@ class Attachment (Base):
     source_system = Column(String(50))
     data_id = Column(Integer)
     upload_date = Column(DateTime(timezone=True), nullable=False)
+    is_active = Column(Boolean, nullable=False, server_default="1")
     created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())

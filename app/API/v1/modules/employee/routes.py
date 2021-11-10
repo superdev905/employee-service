@@ -1,5 +1,5 @@
 
-from typing import Optional
+from typing import List, Optional
 from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
@@ -13,8 +13,11 @@ from ..employee_job.model import EmployeeJob
 from ..housing_situation.model import HousingSituation
 from ..pension_situation.model import PensionSituation
 from ..specialization.model import Specialization
+from ..attachment.services import get_employee_files
+from ..attachment.schema import AttachmentItem
 from .model import Employee
 from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch
+from ...helpers.fetch_data import fetch_service
 from .services import get_bank, get_marital_status, fetch_data
 
 router = SQLAlchemyCRUDRouter(
@@ -143,3 +146,25 @@ def patch_one(item_id: int, patch_body: EmployeePatch, db: Session = Depends(get
     db.commit()
     db.refresh(found_employee)
     return found_employee
+
+
+@router.get("/{item_id}/attachments", response_model=List[AttachmentItem])
+def patch_one(item_id: int, db: Session = Depends(get_database)):
+
+    all_files = []
+
+    employee_files = get_employee_files(db, item_id)
+    for file in employee_files:
+        all_files.append({**file.__dict__, "module": "Trabjadores"})
+
+    assistance_files = fetch_service("", SERVICES["assistance"] +
+                                     "/attachments?employee_id=%s" % format(item_id))
+    for item in assistance_files:
+        all_files.append({**item, "module": "Asistencia"})
+
+    scholarship_files = fetch_service("", SERVICES["scholarship"] +
+                                      "/attachments?employee_id=%s" % format(item_id))
+    for current in scholarship_files:
+        all_files.append({**current, "module": "Becas"})
+
+    return all_files

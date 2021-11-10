@@ -10,7 +10,7 @@ from .model import Specialization
 from .schema import Specialization as SpecializationSchema, SpecializationCreate, SpecializationPatch
 from ...helpers.fetch_data import fetch_parameter_data
 from ...helpers.crud import get_updated_obj
-from ..attachment.services import delete_attachment, save_attachment
+from ..attachment.services import delete_attachment, disable_attachment, save_attachment
 
 
 router = SQLAlchemyCRUDRouter(
@@ -80,6 +80,7 @@ async def update_one(item_id: int, body: SpecializationCreate, db: Session = Dep
     if body.certification_file:
         if found_obj.certification_file.file_key != body.certification_file.file_key:
             old_attachment = found_obj.certification_file
+            disable_attachment(db, found_obj.certification_file_id)
             has_delete_attachment = True
             new_attachment = save_attachment(
                 db, body.certification_file, body.created_by)
