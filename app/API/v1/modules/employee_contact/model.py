@@ -22,6 +22,7 @@ class EmployeeContact(Base):
     department = Column(String(255))
     mobile_phone = Column(String(9))
     landline_phone = Column(String(12))
+    phone_owner = Column(String(200))
     other_phone = Column(String(9))
     email = Column(String(255), nullable=False, unique=True)
     is_confirmed = Column(Boolean, default=False)

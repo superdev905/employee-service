@@ -35,6 +35,7 @@ class EmployeeBase(BaseModel):
                                       'DISCAPACIDAD PSÍQUICA'
                                       ]]
     disability_percentage: Optional[str]
+    comments: Optional[str]
 
     class Config:
         orm_mode = True
