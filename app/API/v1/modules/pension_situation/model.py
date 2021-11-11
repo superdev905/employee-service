@@ -12,6 +12,8 @@ class PensionSituation(Base):
     employee_id = Column(Integer,
                          ForeignKey('employee.id'), nullable=False)
     isapre_fonasa_id = Column(Integer, nullable=False)
+    isapre_fonasa_name = Column(
+        String(120), nullable=False, server_default="ISAPRE OFICIAL")
     afp_isp_id = Column(Integer, nullable=False)
     is_pensioner = Column(String(2), nullable=False)
     pension_amount = Column(Float)

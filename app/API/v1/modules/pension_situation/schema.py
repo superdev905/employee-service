@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class PensionSituationCreate(BaseModel):
     employee_id: int
     isapre_fonasa_id: int
+    isapre_fonasa_name: str
     afp_isp_id: int
     is_pensioner: str
     pension_amount: Optional[float]
