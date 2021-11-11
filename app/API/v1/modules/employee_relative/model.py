@@ -28,6 +28,8 @@ class EmployeeRelative(Base):
     rsh_status = Column(String(10))
     phone = Column(String(9))
     state = Column(String(7), nullable=False, default="CREATED")
+    belongs_to_reconocer = Column(
+        String(2), nullable=False, server_default="NO")
     is_main = Column(Boolean, nullable=False, default=True)
     created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),

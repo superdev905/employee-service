@@ -2,7 +2,6 @@ from typing import Optional
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import and_
 from fastapi_crudrouter import SQLAlchemyCRUDRouter

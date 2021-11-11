@@ -27,6 +27,7 @@ class EmployeeRelativeCreate(BaseModel):
     is_main: Optional[bool]
     created_by: int
     phone: Optional[str]
+    belongs_to_reconocer: str
 
     class Config:
         orm_mode = True
