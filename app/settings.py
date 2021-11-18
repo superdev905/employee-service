@@ -29,6 +29,11 @@ services_hostnames = {
         "testing": BASE_HOSTNAME + ":5198/api/v1",
         "production": BASE_HOSTNAME + ":5108/api/v1",
     },
+    "users": {
+        "development": BASE_HOSTNAME + ":5500/api/v1",
+        "testing": BASE_HOSTNAME + ":5192/api/v1",
+        "production": BASE_HOSTNAME + ":5102/api/v1",
+    },
 }
 
 ENV = os.getenv("ENV")
@@ -39,4 +44,5 @@ SERVICES = {
     "parameters": services_hostnames["parameters"][ENV],
     "assistance": services_hostnames["assistance"][ENV],
     "scholarship": services_hostnames["scholarship"][ENV],
+    "users": services_hostnames["users"][ENV],
 }

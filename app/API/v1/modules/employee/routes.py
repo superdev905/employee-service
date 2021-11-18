@@ -1,9 +1,9 @@
 
 from typing import List, Optional
+from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.elements import and_, or_
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
@@ -149,7 +149,7 @@ def patch_one(item_id: int, patch_body: EmployeePatch, db: Session = Depends(get
 
 
 @router.get("/{item_id}/attachments", response_model=List[AttachmentItem])
-def patch_one(item_id: int, db: Session = Depends(get_database)):
+def patch_one(req: Request, item_id: int, db: Session = Depends(get_database)):
 
     all_files = []
 
@@ -157,12 +157,12 @@ def patch_one(item_id: int, db: Session = Depends(get_database)):
     for file in employee_files:
         all_files.append({**file.__dict__, "module": "Trabjadores"})
 
-    assistance_files = fetch_service("", SERVICES["assistance"] +
+    assistance_files = fetch_service(req.token, SERVICES["assistance"] +
                                      "/attachments?employee_id=%s" % format(item_id))
     for item in assistance_files:
         all_files.append({**item, "module": "Asistencia"})
 
-    scholarship_files = fetch_service("", SERVICES["scholarship"] +
+    scholarship_files = fetch_service(req.token, SERVICES["scholarship"] +
                                       "/attachments?employee_id=%s" % format(item_id))
     for current in scholarship_files:
         all_files.append({**current, "module": "Becas"})

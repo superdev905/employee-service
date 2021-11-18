@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from .middlewares.auth import JWTBearer
 from ..v1.modules.employee.routes import router as employee_router
 from ..v1.modules.employee_contact.routes import router as employee_contact_router
 from ..v1.modules.employee_relative.routes import router as employee_relative_router
@@ -9,7 +10,7 @@ from ..v1.modules.employee_job.routes import router as employee_job_router
 from ..v1.modules.attachment.routes import router as attachment_router
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 
 router.include_router(employee_router)
