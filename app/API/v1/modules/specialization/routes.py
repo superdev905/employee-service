@@ -80,14 +80,12 @@ async def update_one(req: Request,
     updated_body = jsonable_encoder(body)
     old_attachment = None
     new_attachment = None
-    has_delete_attachment = False
 
     if body.certification_file:
         if found_obj.certification_file:
             if found_obj.certification_file.file_key != body.certification_file.file_key:
                 old_attachment = found_obj.certification_file
                 disable_attachment(db, found_obj.certification_file_id)
-                has_delete_attachment = True
                 new_attachment = save_attachment(
                     db, body.certification_file, body.created_by)
         else:
