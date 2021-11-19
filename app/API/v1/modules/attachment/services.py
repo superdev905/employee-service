@@ -22,8 +22,8 @@ def save_attachment(db: Session, obj: dict, user_id: int):
     return new_attachment
 
 
-def delete_attachment(attachment):
-    delete_file_from_store(attachment.file_key)
+def delete_attachment(token: str, attachment):
+    delete_file_from_store(token, attachment.file_key)
 
 
 def disable_attachment(db: Session, id: int):

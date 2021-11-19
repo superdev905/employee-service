@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi import Request
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm.session import Session
@@ -18,7 +19,8 @@ router = SQLAlchemyCRUDRouter(
 
 
 @router.get("")
-def overloaded_get_all(skip: int = None,
+def overloaded_get_all(req: Request,
+                       skip: int = None,
                        limit: int = None,
                        employee_id: Optional[int] = None,
                        db: Session = Depends(get_database)):
@@ -31,9 +33,12 @@ def overloaded_get_all(skip: int = None,
     list = db.query(PensionSituation).filter(
         *filters).offset(skip).limit(limit).all()
     for item in list:
-        afp_isp = fetch_parameter_data(item.afp_isp_id, "afp-isp")
-        isapre_fonasa = fetch_parameter_data(
-            item.isapre_fonasa_id, "isapre-fonasa")
+        afp_isp = fetch_parameter_data(req.token,
+                                       item.afp_isp_id,
+                                       "afp-isp")
+        isapre_fonasa = fetch_parameter_data(req.token,
+                                             item.isapre_fonasa_id,
+                                             "isapre-fonasa")
         result.append({**item.__dict__,
                        "afp_isp": afp_isp,
                        "isapre_fonasa": isapre_fonasa})

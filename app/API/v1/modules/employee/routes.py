@@ -17,7 +17,7 @@ from ..attachment.services import get_employee_files
 from ..attachment.schema import AttachmentItem
 from .model import Employee
 from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch
-from ...helpers.fetch_data import fetch_service
+from ...helpers.fetch_data import fetch_parameter_data, fetch_service
 from .services import get_bank, get_marital_status, fetch_data
 
 router = SQLAlchemyCRUDRouter(
@@ -73,7 +73,7 @@ def overloaded_create_one(employee: EmployeeCreate, db: Session = Depends(get_da
 
 
 @router.get("/{item_id}")
-def get_one(item_id: int = None, db: Session = Depends(get_database)):
+def get_one(req: Request, item_id: int = None, db: Session = Depends(get_database)):
     found_employee = db.query(Employee).filter(
         Employee.id == item_id).first()
     if not found_employee:
@@ -85,16 +85,17 @@ def get_one(item_id: int = None, db: Session = Depends(get_database)):
                                                           HousingSituation.state != "DELETED")).order_by(HousingSituation.created_at.desc()).first()
     pension_status = db.query(PensionSituation).filter(and_(PensionSituation.employee_id == item_id,
                                                             PensionSituation.state != "DELETED")).order_by(PensionSituation.created_at.desc()).first()
-    bank_details = get_bank(
-        found_employee.bank_id) if found_employee.bank_id else None
+    bank_details = fetch_parameter_data(req.token,
+                                        found_employee.bank_id,
+                                        "banks") if found_employee.bank_id else None
     specialty = db.query(Specialization).filter(
         Specialization.employee_id == item_id).order_by(Specialization.created_at.desc()).first()
 
     return {**found_employee.__dict__,
             "bank": bank_details,
-            "marital_status": get_marital_status(found_employee.marital_status_id),
-            "nationality": fetch_data(found_employee.nationality_id, "nationalities"),
-            "scholarship": fetch_data(found_employee.scholarship_id, "scholarship"),
+            "marital_status": fetch_parameter_data(req.token, found_employee.marital_status_id, "marital-status"),
+            "nationality": fetch_parameter_data(req.token, found_employee.nationality_id,  "nationalities"),
+            "scholarship": fetch_parameter_data(req.token, found_employee.scholarship_id, "scholarship"),
             "current_job": current_job,
             "house_status": house_status,
             "pension_status": pension_status,

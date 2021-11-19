@@ -1,7 +1,9 @@
 import urllib3
 import json
+from fastapi import Request
 from fastapi.exceptions import HTTPException
 from app.settings import SERVICES
+from ...helpers.fetch_data import fetch_parameter_data
 
 http = urllib3.PoolManager()
 
@@ -13,12 +15,9 @@ def handle_response(result) -> object:
     raise HTTPException(status_code=400, detail="Error al obtener datos")
 
 
-def get_bank(bank_id: int) -> object:
+def get_bank(req: Request, bank_id: int) -> object:
 
-    bank = http.request(
-        'GET', SERVICES["parameters"]+'/banks/'+str(bank_id))
-
-    return handle_response(bank)
+    return fetch_parameter_data(req.token, SERVICES["parameters"]+'/banks/'+str(bank_id))
 
 
 def get_marital_status(id: int) -> object:

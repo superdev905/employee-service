@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi import Request
 from fastapi.param_functions import Depends
 from sqlalchemy.orm.session import Session
 from fastapi.exceptions import HTTPException
@@ -19,10 +20,12 @@ router = SQLAlchemyCRUDRouter(
 
 
 @router.get("")
-def get_all(skip: int = None,
-            limit: int = None,
-            employee_run: Optional[str] = None,
-            db: Session = Depends(get_database)):
+def get_all(
+        req: Request,
+        skip: int = None,
+        limit: int = None,
+        employee_run: Optional[str] = None,
+        db: Session = Depends(get_database)):
     filters = []
     if employee_run:
         filters.append(EmployeeContact.employee_run == employee_run)
@@ -35,8 +38,8 @@ def get_all(skip: int = None,
     for item in list:
         result.append(
             {**item.__dict__,
-             "region": fetch_parameter_data(item.region_id, "regions"),
-             "commune": fetch_parameter_data(item.commune_id, "communes")})
+             "region": fetch_parameter_data(req.token, item.region_id, "regions"),
+             "commune": fetch_parameter_data(req.token, item.commune_id, "communes")})
     return result
 
 

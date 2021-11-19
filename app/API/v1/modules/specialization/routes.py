@@ -1,8 +1,8 @@
 from typing import Optional
+from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
@@ -23,7 +23,8 @@ router = SQLAlchemyCRUDRouter(
 
 
 @router.get("")
-def overloaded_get_all(skip: int = 0,
+def overloaded_get_all(req: Request,
+                       skip: int = 0,
                        limit: int = 20,
                        employee_id: Optional[int] = None,
                        db: Session = Depends(get_database)):
@@ -35,11 +36,11 @@ def overloaded_get_all(skip: int = 0,
     query_list = db.query(Specialization).filter(
         *filters).offset(skip).limit(limit).all()
     for item in query_list:
-        entity = fetch_parameter_data(
-            item.certifying_entity_id, "entities") if item.certifying_entity_id else None
+        entity = fetch_parameter_data(req.token,
+                                      item.certifying_entity_id, "entities") if item.certifying_entity_id else None
         result.append({**item.__dict__,
-                       "specialty": fetch_parameter_data(item.specialty_id, "specialties"),
-                       "specialty_detail": fetch_parameter_data(item.specialty_detail_id, "sub-specialties"),
+                       "specialty": fetch_parameter_data(req.token, item.specialty_id, "specialties"),
+                       "specialty_detail": fetch_parameter_data(req.token, item.specialty_detail_id, "sub-specialties"),
                        "certifying_entity": entity})
 
     return result
@@ -65,7 +66,11 @@ def create(body: SpecializationCreate, db: Session = Depends(get_database)):
 
 
 @router.put('/{item_id}')
-async def update_one(item_id: int, body: SpecializationCreate, db: Session = Depends(get_database)):
+async def update_one(req: Request,
+                     item_id: int,
+                     body: SpecializationCreate,
+                     db: Session = Depends(get_database)):
+
     found_obj = db.query(Specialization).filter(
         Specialization.id == item_id).first()
     if not found_obj:
@@ -78,24 +83,27 @@ async def update_one(item_id: int, body: SpecializationCreate, db: Session = Dep
     has_delete_attachment = False
 
     if body.certification_file:
-        if found_obj.certification_file.file_key != body.certification_file.file_key:
-            old_attachment = found_obj.certification_file
-            disable_attachment(db, found_obj.certification_file_id)
-            has_delete_attachment = True
+        if found_obj.certification_file:
+            if found_obj.certification_file.file_key != body.certification_file.file_key:
+                old_attachment = found_obj.certification_file
+                disable_attachment(db, found_obj.certification_file_id)
+                has_delete_attachment = True
+                new_attachment = save_attachment(
+                    db, body.certification_file, body.created_by)
+        else:
             new_attachment = save_attachment(
                 db, body.certification_file, body.created_by)
-
     del updated_body["certification_file"]
 
     updated_spec = get_updated_obj(found_obj, updated_body)
-    if (has_delete_attachment and new_attachment):
+    if new_attachment:
         updated_spec.certification_file_id = new_attachment.id
     db.add(updated_spec)
     db.commit()
     db.refresh(updated_spec)
 
-    if(has_delete_attachment and old_attachment):
-        delete_attachment(old_attachment)
+    if old_attachment:
+        delete_attachment(req.token, old_attachment)
 
     return updated_spec
 

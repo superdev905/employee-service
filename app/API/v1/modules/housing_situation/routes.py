@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi import Request
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm.session import Session
@@ -18,10 +19,12 @@ router = SQLAlchemyCRUDRouter(
 
 
 @router.get("")
-def overloaded_get_all(skip: int = 0,
-                       limit: int = 20,
-                       employee_id: Optional[int] = None,
-                       db: Session = Depends(get_database)):
+def overloaded_get_all(
+        req: Request,
+        skip: int = 0,
+        limit: int = 20,
+        employee_id: Optional[int] = None,
+        db: Session = Depends(get_database)):
     filters = []
     if employee_id:
         filters.append(HousingSituation.employee_id == employee_id)
@@ -30,11 +33,15 @@ def overloaded_get_all(skip: int = 0,
     list = db.query(HousingSituation).filter(
         *filters).offset(skip).limit(limit).all()
     for item in list:
-        type_home = fetch_parameter_data(item.type_home_id, "types-home")
-        property_home = fetch_parameter_data(
-            item.property_home_id, "property-home")
-        type_subsidy = fetch_parameter_data(
-            item.type_subsidy_id, "types-subsidy")
+        type_home = fetch_parameter_data(req.token,
+                                         item.type_home_id,
+                                         "types-home")
+        property_home = fetch_parameter_data(req.token,
+                                             item.property_home_id,
+                                             "property-home")
+        type_subsidy = fetch_parameter_data(req.token,
+                                            item.type_subsidy_id,
+                                            "types-subsidy")
         result.append({**item.__dict__,
                        "type_home": type_home,
                        "property_home": property_home,

@@ -13,16 +13,21 @@ def handle_response(result) -> object:
     raise HTTPException(status_code=400, detail="Error al obtener datos")
 
 
-def fetch_parameter_data(id: int, endpoint: str) -> object:
+def fetch_parameter_data(token: str, id: int, endpoint: str) -> object:
     response = http.request(
-        'GET', SERVICES["parameters"]+'/'+endpoint+'/'+str(id))
+        'GET', SERVICES["parameters"]+'/'+endpoint+'/'+str(id), headers={
+            "Authorization": "Bearer %s" % token
+        })
 
     return handle_response(response)
 
 
-def delete_file_from_store(file_key: str):
+def delete_file_from_store(token, file_key: str):
     user_req = http.request(
-        'DELETE', SERVICES["parameters"]+"/file/delete/"+file_key)
+        'DELETE', SERVICES["parameters"]+"/file/delete/"+file_key,
+        headers={
+            "Authorization": "Bearer %s" % token
+        })
     result = handle_response(user_req)
 
     return result

@@ -1,4 +1,5 @@
 from typing import Optional
+from fastapi import Request
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -33,7 +34,7 @@ def is_run_taken(db: Session, run: str, excluded_id: int):
 
 
 @router.get("/{item_id}")
-def get_one(item_id: int, db: Session = Depends(get_database)):
+def get_one(req: Request, item_id: int, db: Session = Depends(get_database)):
 
     db_obj = db.query(EmployeeRelative).filter(
         EmployeeRelative.id == item_id).first()
@@ -42,8 +43,9 @@ def get_one(item_id: int, db: Session = Depends(get_database)):
         raise HTTPException(
             status_code=400, detail="Este familiar no está registrado")
 
-    relationship = fetch_parameter_data(
-        db_obj.relationship_id, "relationships")
+    relationship = fetch_parameter_data(req.token,
+                                        db_obj.relationship_id,
+                                        "relationships")
 
     return {**db_obj.__dict__, "relationship": relationship["description"]}
 
