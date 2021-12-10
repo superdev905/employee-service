@@ -1,6 +1,6 @@
 
 from typing import List, Optional
-from fastapi import Request
+from fastapi import Request, APIRouter
 from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
@@ -16,7 +16,7 @@ from ..specialization.model import Specialization
 from ..attachment.services import get_employee_files
 from ..attachment.schema import AttachmentItem
 from .model import Employee
-from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch
+from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch, EmployeeValidate
 from ...helpers.fetch_data import fetch_parameter_data, fetch_service
 from .services import get_bank, get_marital_status, fetch_data
 
@@ -169,3 +169,17 @@ def patch_one(req: Request, item_id: int, db: Session = Depends(get_database)):
         all_files.append({**current, "module": "Becas"})
 
     return all_files
+
+
+public_router = APIRouter(prefix="/public/employee",
+                          tags=["Consultas web"])
+
+
+@public_router.post("/validate")
+def validate_rut(body: EmployeeValidate, db: Session = Depends(get_database)):
+    found_employee = db.query(Employee).filter(
+        Employee.run == body.rut).first()
+    if not found_employee:
+        raise HTTPException(
+            status_code=400, detail="Este trabajador no existe")
+    return found_employee

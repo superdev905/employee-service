@@ -88,3 +88,10 @@ class EmployeeSchema (EmployeeCreate):
 
     class Config:
         orm_mode = True
+
+
+class EmployeeValidate (BaseModel):
+    rut: str
+
+    class Config:
+        orm_mode = True
