@@ -12,6 +12,7 @@ from app.settings import SERVICES
 from ..employee_job.model import EmployeeJob
 from ..housing_situation.model import HousingSituation
 from ..pension_situation.model import PensionSituation
+from ..employee_contact.model import EmployeeContact
 from ..specialization.model import Specialization
 from ..attachment.services import get_employee_files
 from ..attachment.schema import AttachmentItem
@@ -91,6 +92,9 @@ def get_one(req: Request, item_id: int = None, db: Session = Depends(get_databas
     specialty = db.query(Specialization).filter(
         Specialization.employee_id == item_id).order_by(Specialization.created_at.desc()).first()
 
+    contact = db.query(EmployeeContact).filter(
+        EmployeeContact.employee_run == found_employee.run).first()
+
     return {**found_employee.__dict__,
             "bank": bank_details,
             "marital_status": fetch_parameter_data(req.token, found_employee.marital_status_id, "marital-status"),
@@ -99,7 +103,8 @@ def get_one(req: Request, item_id: int = None, db: Session = Depends(get_databas
             "current_job": current_job,
             "house_status": house_status,
             "pension_status": pension_status,
-            "specialty": specialty}
+            "specialty": specialty,
+            "contact": contact}
 
 
 @router.put("/{item_id}")
