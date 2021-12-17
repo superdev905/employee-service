@@ -14,7 +14,7 @@ router = APIRouter(dependencies=[Depends(JWTBearer())])
 
 
 router.include_router(employee_router)
-router.include_router(employee_public_router)
+
 router.include_router(employee_contact_router)
 router.include_router(employee_relative_router)
 router.include_router(pension_situation_router)
@@ -22,3 +22,6 @@ router.include_router(housing_situation_router)
 router.include_router(specialization_router)
 router.include_router(employee_job_router)
 router.include_router(attachment_router)
+
+public_router = APIRouter()
+public_router.include_router(employee_public_router)

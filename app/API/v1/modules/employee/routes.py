@@ -176,7 +176,7 @@ def patch_one(req: Request, item_id: int, db: Session = Depends(get_database)):
     return all_files
 
 
-public_router = APIRouter(prefix="/public/employee",
+public_router = APIRouter(prefix="/employee",
                           tags=["Consultas web"])
 
 
@@ -187,4 +187,31 @@ def validate_rut(body: EmployeeValidate, db: Session = Depends(get_database)):
     if not found_employee:
         raise HTTPException(
             status_code=400, detail="Este trabajador no existe")
-    return found_employee
+    return {"employeeId": found_employee.id}
+
+
+@public_router.get("/{id}")
+def get_one(req: Request, id: int = None, db: Session = Depends(get_database)):
+    found_employee = db.query(Employee).filter(
+        Employee.id == id).first()
+    if not found_employee:
+        raise HTTPException(
+            status_code=400, detail="Este trabajador no existe")
+    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id == id,
+                                                    EmployeeJob.state != "DELETED")).order_by(EmployeeJob.created_at.desc()).first()
+    house_status = db.query(HousingSituation).filter(and_(HousingSituation.employee_id == id,
+                                                          HousingSituation.state != "DELETED")).order_by(HousingSituation.created_at.desc()).first()
+    pension_status = db.query(PensionSituation).filter(and_(PensionSituation.employee_id == id,
+                                                            PensionSituation.state != "DELETED")).order_by(PensionSituation.created_at.desc()).first()
+    specialty = db.query(Specialization).filter(
+        Specialization.employee_id == id).order_by(Specialization.created_at.desc()).first()
+
+    contact = db.query(EmployeeContact).filter(
+        EmployeeContact.employee_run == found_employee.run).first()
+
+    return {**found_employee.__dict__,
+            "current_job": current_job,
+            "house_status": house_status,
+            "pension_status": pension_status,
+            "specialty": specialty,
+            "contact": contact}
