@@ -18,7 +18,7 @@ from ..attachment.services import get_employee_files
 from ..attachment.schema import AttachmentItem
 from .model import Employee
 from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch, EmployeeValidate
-from ...helpers.fetch_data import fetch_parameter_data, fetch_service
+from ...helpers.fetch_data import fetch_parameter_data, fetch_parameter_public, fetch_service
 from .services import get_bank, get_marital_status, fetch_data
 
 router = SQLAlchemyCRUDRouter(
@@ -190,28 +190,61 @@ def validate_rut(body: EmployeeValidate, db: Session = Depends(get_database)):
     return {"employeeId": found_employee.id}
 
 
-@public_router.get("/{id}")
-def get_one(req: Request, id: int = None, db: Session = Depends(get_database)):
+@public_router.get("/{item_id}")
+def get_one(item_id: int = None, db: Session = Depends(get_database)):
     found_employee = db.query(Employee).filter(
-        Employee.id == id).first()
+        Employee.id == item_id).first()
     if not found_employee:
         raise HTTPException(
             status_code=400, detail="Este trabajador no existe")
-    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id == id,
+    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id == item_id,
                                                     EmployeeJob.state != "DELETED")).order_by(EmployeeJob.created_at.desc()).first()
-    house_status = db.query(HousingSituation).filter(and_(HousingSituation.employee_id == id,
+    house_status = db.query(HousingSituation).filter(and_(HousingSituation.employee_id == item_id,
                                                           HousingSituation.state != "DELETED")).order_by(HousingSituation.created_at.desc()).first()
-    pension_status = db.query(PensionSituation).filter(and_(PensionSituation.employee_id == id,
+    pension_status = db.query(PensionSituation).filter(and_(PensionSituation.employee_id == item_id,
                                                             PensionSituation.state != "DELETED")).order_by(PensionSituation.created_at.desc()).first()
+    bank_details = fetch_parameter_public(found_employee.bank_id,
+                                          "banks") if found_employee.bank_id else None
+
     specialty = db.query(Specialization).filter(
-        Specialization.employee_id == id).order_by(Specialization.created_at.desc()).first()
+        Specialization.employee_id == item_id).order_by(Specialization.created_at.desc()).first()
 
     contact = db.query(EmployeeContact).filter(
         EmployeeContact.employee_run == found_employee.run).first()
 
+    print('osjdisdjsijdisj', fetch_parameter_public(
+        found_employee.marital_status_id, "marital-status"))
+
     return {**found_employee.__dict__,
+            "bank": bank_details,
+            "marital_status": fetch_parameter_public(found_employee.marital_status_id, "marital-status"),
+            "nationality": fetch_parameter_public(found_employee.nationality_id,  "nationalities"),
+            "scholarship": fetch_parameter_public(found_employee.scholarship_id, "scholarship"),
             "current_job": current_job,
             "house_status": house_status,
             "pension_status": pension_status,
             "specialty": specialty,
             "contact": contact}
+
+
+@public_router.put("/{item_id}")
+def overloaded_update_one(item_id: int, update_body: EmployeeCreate, db: Session = Depends(get_database)):
+    found_employee = db.query(Employee).filter(
+        Employee.id == item_id).first()
+    if not found_employee:
+        raise HTTPException(
+            status_code=400, detail="Este trabajador no existe")
+
+    obj_data = jsonable_encoder(found_employee)
+
+    if isinstance(update_body, dict):
+        update_data = update_body
+    else:
+        update_data = update_body.dict(exclude_unset=True)
+    for field in obj_data:
+        if field in update_data:
+            setattr(found_employee, field, update_data[field])
+    db.add(found_employee)
+    db.commit()
+    db.refresh(found_employee)
+    return found_employee

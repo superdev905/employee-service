@@ -13,6 +13,14 @@ def handle_response(result) -> object:
     raise HTTPException(status_code=400, detail="Error al obtener datos")
 
 
+def fetch_parameter_public(id: int, endpoint: str) -> object:
+    print(SERVICES["parameters"]+'/public/'+endpoint+'/'+str(id))
+    response = http.request(
+        'GET', SERVICES["parameters"]+'/public/'+endpoint+'/'+str(id))
+
+    return handle_response(response)
+
+
 def fetch_parameter_data(token: str, id: int, endpoint: str) -> object:
     response = http.request(
         'GET', SERVICES["parameters"]+'/'+endpoint+'/'+str(id), headers={
