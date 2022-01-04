@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import Request
+from fastapi import Request, APIRouter, Query
 from fastapi.param_functions import Depends
 from sqlalchemy.orm.session import Session
 from fastapi.exceptions import HTTPException
@@ -8,7 +8,8 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from .model import EmployeeContact
 from .schema import EmployeeContact as EmployeeContactSchema, EmployeeContactCreate, EmployeeContactPatch
-from ...helpers.fetch_data import fetch_parameter_data
+from ...helpers.fetch_data import fetch_parameter_data, fetch_parameter_public
+from ...helpers.crud import get_updated_obj
 
 router = SQLAlchemyCRUDRouter(
     schema=EmployeeContactSchema,
@@ -72,3 +73,43 @@ def block_one(item_id: int, patch_body: EmployeeContactPatch,  db: Session = Dep
     db.refresh(found_employee)
 
     return found_employee
+
+
+public_router = APIRouter(prefix="/employee-contact",
+                          tags=["Consultas web"])
+
+
+@public_router.get("")
+def get_all(employee_run: Optional[str] = Query(None, alias="employeeRun"),
+            db: Session = Depends(get_database)):
+
+    filters = []
+    if employee_run:
+        filters.append(EmployeeContact.employee_run == employee_run)
+    filters.append(EmployeeContact.state != "DELETED")
+
+    contact = db.query(EmployeeContact).filter(*filters).first()
+
+    result = {**contact.__dict__,
+              "region": fetch_parameter_public(contact.region_id, "regions"),
+              "commune": fetch_parameter_public(contact.commune_id, "communes")} if contact else None
+
+    return result
+
+
+@public_router.put("/{id}")
+def update_contact(id: int,
+                   body: EmployeeContactSchema,
+                   db: Session = Depends(get_database)):
+    contact = db.query(EmployeeContact).filter(
+        EmployeeContact.id == id).first()
+    if not contact:
+        raise HTTPException(
+            status_code=400, detail="Este contacto no existe")
+    contact = get_updated_obj(contact, body)
+
+    db.add(contact)
+    db.commit()
+    db.refresh(contact)
+
+    return contact

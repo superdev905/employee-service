@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from .middlewares.auth import JWTBearer
 from ..v1.modules.employee.routes import router as employee_router, public_router as employee_public_router
-from ..v1.modules.employee_contact.routes import router as employee_contact_router
+from ..v1.modules.employee_contact.routes import router as employee_contact_router, public_router as contact_public_router
 from ..v1.modules.employee_relative.routes import router as employee_relative_router
 from ..v1.modules.pension_situation.routes import router as pension_situation_router
 from ..v1.modules.housing_situation.routes import router as housing_situation_router
@@ -25,3 +25,4 @@ router.include_router(attachment_router)
 
 public_router = APIRouter()
 public_router.include_router(employee_public_router)
+public_router.include_router(contact_public_router)
