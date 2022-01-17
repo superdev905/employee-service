@@ -33,6 +33,7 @@ class Employee(Base):
     comments = Column(String(800))
     state = Column(String(7), nullable=False,
                    default="CREATED", server_default="CREATED")
+    etnia = Column(String(120))
     created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())

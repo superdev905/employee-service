@@ -1,4 +1,6 @@
 from typing import Optional
+
+from sqlalchemy.sql.elements import and_
 from fastapi import Request, APIRouter, Query
 from fastapi.param_functions import Depends
 from sqlalchemy.orm.session import Session
@@ -88,13 +90,13 @@ def get_all(employee_run: Optional[str] = Query(None, alias="employeeRun"),
         filters.append(EmployeeContact.employee_run == employee_run)
     filters.append(EmployeeContact.state != "DELETED")
 
-    contact = db.query(EmployeeContact).filter(*filters).first()
+    contact = db.query(EmployeeContact).filter(and_(*filters)).first()
 
-    result = {**contact.__dict__,
-              "region": fetch_parameter_public(contact.region_id, "regions"),
-              "commune": fetch_parameter_public(contact.commune_id, "communes")} if contact else None
-
-    return result
+    commune = fetch_parameter_public(contact.commune_id, "communes")
+    region = fetch_parameter_public(contact.region_id, "regions")
+    return {**contact.__dict__,
+            "region": commune,
+            "commune": region}
 
 
 @public_router.put("/{id}")

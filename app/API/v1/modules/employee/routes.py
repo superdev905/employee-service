@@ -225,26 +225,3 @@ def get_one(item_id: int = None, db: Session = Depends(get_database)):
             "pension_status": pension_status,
             "specialty": specialty,
             "contact": contact}
-
-
-@public_router.put("/{item_id}")
-def overloaded_update_one(item_id: int, update_body: EmployeeCreate, db: Session = Depends(get_database)):
-    found_employee = db.query(Employee).filter(
-        Employee.id == item_id).first()
-    if not found_employee:
-        raise HTTPException(
-            status_code=400, detail="Este trabajador no existe")
-
-    obj_data = jsonable_encoder(found_employee)
-
-    if isinstance(update_body, dict):
-        update_data = update_body
-    else:
-        update_data = update_body.dict(exclude_unset=True)
-    for field in obj_data:
-        if field in update_data:
-            setattr(found_employee, field, update_data[field])
-    db.add(found_employee)
-    db.commit()
-    db.refresh(found_employee)
-    return found_employee

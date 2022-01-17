@@ -36,6 +36,7 @@ class EmployeeBase(BaseModel):
                                       ]]
     disability_percentage: Optional[str]
     comments: Optional[str]
+    etnia: Optional[str]
 
     class Config:
         orm_mode = True
