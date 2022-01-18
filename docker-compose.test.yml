@@ -4,7 +4,6 @@ services:
   employee-api-test:
     build: .
     container_name: employee-test
-    restart: unless-stopped
     command: bash -c "alembic upgrade head && uvicorn app.main:app --workers 1 --host 0.0.0.0 --port 80"
     volumes:
       - .:/app
@@ -12,6 +11,13 @@ services:
       - 5194:80
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      - ENV=testing
+      - DATABASE_URL_DEV=postgresql://Anakin:Anakin4@db:5432/employees
+    restart: on-failure
+    depends_on:
+      - db
+    
   db:
     restart: unless-stopped
     image: postgres:13-alpine
