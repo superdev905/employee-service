@@ -49,3 +49,15 @@ def fetch_service(token: str, route: str) -> str:
     result = handle_response(user_req)
 
     return result
+
+
+def fetch_users_service(token: str, user_id: int) -> str:
+    user_req = http.request(
+        'GET', SERVICES["users"]+'/users/' + str(user_id), headers={
+            "Authorization": "Bearer %s" % token
+        })
+    result = handle_response(user_req)
+
+    return {**result,
+            "paternalSurname": result["paternal_surname"],
+            "maternalSurname": result["maternal_surname"]}

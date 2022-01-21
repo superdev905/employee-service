@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Literal, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from faker import Faker
 
 fake = Faker()
@@ -17,7 +17,6 @@ class EmployeeBase(BaseModel):
     scholarship_id: int
     disability: str
     credential_disability: Optional[str]
-    recognize: str
     nationality_id: int
     alive: str
     bank_id: Optional[int]
@@ -96,3 +95,21 @@ class EmployeeValidate (BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class EmployeeRevisionBase(BaseModel):
+    date: datetime
+    employee_id: int = Field(alias="employeeId")
+    assistance_id: int = Field(alias="assistanceId")
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+
+class EmployeeRevisionCreate(EmployeeRevisionBase):
+    pass
+
+
+class EmployeeRevisionItem(EmployeeRevisionBase):
+    id: int

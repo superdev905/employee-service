@@ -3,7 +3,7 @@ from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
 from app.database.base_class import Base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 
 
 class Employee(Base):
@@ -19,7 +19,6 @@ class Employee(Base):
     scholarship_id = Column(Integer, nullable=False)
     disability = Column(String(2), nullable=False)
     credential_disability = Column(String(2), nullable=False)
-    recognize = Column(String(2), nullable=False, default="NO")
     nationality_id = Column(Integer, nullable=False)
     alive = Column(String(2), nullable=False)
     bank_id = Column(Integer)
@@ -46,3 +45,23 @@ class Employee(Base):
         "EmployeeRelative", back_populates="employee", lazy="select")
     jobs = relationship(
         "EmployeeJob", back_populates="employee", lazy="select")
+    revisions = relationship(
+        "EmployeeRevision", back_populates="employee", lazy="select")
+
+
+class EmployeeRevision(Base):
+    __tablename__ = "employee_revision"
+    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
+    employee_id = Column(Integer, ForeignKey("employee.id"), nullable=False)
+    assistance_id = Column(Integer, nullable=False)
+    assistance_names = Column(String(250), nullable=False)
+    date = Column(DateTime(timezone=True), nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_by = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True),
+                        nullable=False, server_default=func.now())
+    update_at = Column(DateTime(timezone=True),
+                       nullable=False,
+                       onupdate=func.now(), server_default=func.now())
+    employee = relationship(
+        "Employee", back_populates="revisions", lazy="joined")

@@ -16,9 +16,9 @@ from ..employee_contact.model import EmployeeContact
 from ..specialization.model import Specialization
 from ..attachment.services import get_employee_files
 from ..attachment.schema import AttachmentItem
-from .model import Employee
-from .schema import EmployeeSchema, EmployeeCreate, EmployeePatch, EmployeeValidate
-from ...helpers.fetch_data import fetch_parameter_data, fetch_parameter_public, fetch_service
+from .model import Employee, EmployeeRevision
+from .schema import EmployeeRevisionCreate, EmployeeSchema, EmployeeCreate, EmployeePatch, EmployeeValidate
+from ...helpers.fetch_data import fetch_parameter_data, fetch_parameter_public, fetch_service, fetch_users_service
 from .services import get_bank, get_marital_status, fetch_data
 
 router = SQLAlchemyCRUDRouter(
@@ -105,6 +105,33 @@ def get_one(req: Request, item_id: int = None, db: Session = Depends(get_databas
             "pension_status": pension_status,
             "specialty": specialty,
             "contact": contact}
+
+
+@router.post("/{item_id}/revision")
+def create_revision(req: Request,
+                    body: EmployeeRevisionCreate,
+                    item_id: int = None,
+                    db: Session = Depends(get_database)):
+    found_employee = db.query(Employee).filter(
+        Employee.id == item_id).first()
+    if not found_employee:
+        raise HTTPException(
+            status_code=400, detail="Este trabajador no existe")
+    assistance = fetch_users_service(req.token, body.assistance_id)
+    assistance_names = "%s %s" % (
+        assistance["names"], assistance["paternalSurname"])
+
+    new_revision = jsonable_encoder(body, by_alias=False)
+    new_revision["assistance_names"] = assistance_names.upper()
+    new_revision["created_by"] = req.user_id
+
+    db_revision = EmployeeRevision(**new_revision)
+
+    db.add(db_revision)
+    db.commit()
+    db.refresh(db_revision)
+
+    return db_revision
 
 
 @router.put("/{item_id}")

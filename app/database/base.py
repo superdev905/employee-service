@@ -1,5 +1,5 @@
 from .base_class import Base
-from ..API.v1.modules.employee.model import Employee
+from ..API.v1.modules.employee.model import Employee, EmployeeRevision
 from ..API.v1.modules.employee_contact.model import EmployeeContact
 from ..API.v1.modules.employee_relative.model import EmployeeRelative
 from ..API.v1.modules.pension_situation.model import PensionSituation
