@@ -28,7 +28,6 @@ class EmployeeContact(Base):
     is_confirmed = Column(Boolean, default=False)
     state = Column(String(7), nullable=False, default="CREATED")
     is_main = Column(Boolean, nullable=False, default=True)
-    confirmation_date = Column(DateTime, nullable=False)
     created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())

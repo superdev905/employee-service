@@ -24,7 +24,6 @@ class EmployeeContactCreate(BaseModel):
     employee_run: str
     state: Optional[str]
     is_main: bool
-    confirmation_date: datetime
     phone_owner: Optional[str]
     created_by: int
 
