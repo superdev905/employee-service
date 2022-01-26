@@ -1,3 +1,5 @@
+from datetime import datetime
+from typing import List
 import urllib3
 import json
 from fastapi import Request
@@ -41,3 +43,33 @@ def fetch_data(id: int, endpoint: str) -> object:
         'GET', SERVICES["parameters"]+'/'+endpoint+'/'+str(id))
 
     return handle_response(response)
+
+
+def filter_attachments(list: List, start_date: datetime, end_date: datetime):
+
+    if not start_date and not end_date:
+        return list
+    if start_date and not end_date:
+        filtered_list = []
+        for file in list:
+            file_date = datetime.fromisoformat(file["upload_date"])
+            if datetime.strftime(start_date, '%Y-%m-%d') <= datetime.strftime(file_date, '%Y-%m-%d'):
+                filtered_list.append(file)
+
+        return filtered_list
+
+    if not start_date and end_date:
+        filtered_list = []
+        for file in list:
+            file_date = datetime.fromisoformat(file["upload_date"])
+            if datetime.strftime(file_date, '%Y-%m-%d') <= datetime.strftime(end_date, '%Y-%m-%d'):
+                filtered_list.append(file)
+
+        return filtered_list
+
+    filtered_list = []
+    for file in list:
+        file_date = datetime.fromisoformat(file["upload_date"])
+        if datetime.strftime(file_date, '%Y-%m-%d') >= datetime.strftime(start_date, '%Y-%m-%d') and datetime.strftime(file_date, '%Y-%m-%d') <= datetime.strftime(end_date, '%Y-%m-%d'):
+            filtered_list.append(file)
+    return filtered_list

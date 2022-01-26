@@ -1,6 +1,7 @@
-
+from dateutil import parser
+from datetime import datetime
 from typing import List, Optional
-from fastapi import Request, APIRouter
+from fastapi import Request, APIRouter, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from fastapi.exceptions import HTTPException
@@ -19,7 +20,7 @@ from ..attachment.schema import AttachmentItem
 from .model import Employee, EmployeeRevision
 from .schema import EmployeeRevisionCreate, EmployeeSchema, EmployeeCreate, EmployeePatch, EmployeeValidate
 from ...helpers.fetch_data import fetch_parameter_data, fetch_parameter_public, fetch_service, fetch_users_service
-from .services import get_bank, get_marital_status, fetch_data
+from .services import filter_attachments, get_bank, get_marital_status, fetch_data
 
 router = SQLAlchemyCRUDRouter(
     schema=EmployeeSchema,
@@ -182,7 +183,11 @@ def patch_one(item_id: int, patch_body: EmployeePatch, db: Session = Depends(get
 
 
 @router.get("/{item_id}/attachments", response_model=List[AttachmentItem])
-def patch_one(req: Request, item_id: int, db: Session = Depends(get_database)):
+def get_attachments(req: Request,
+                    item_id: int,
+                    start_date: datetime = Query(None, alias="startDate"),
+                    end_date: datetime = Query(None, alias="endDate"),
+                    db: Session = Depends(get_database)):
 
     all_files = []
 
@@ -200,7 +205,7 @@ def patch_one(req: Request, item_id: int, db: Session = Depends(get_database)):
     for current in scholarship_files:
         all_files.append({**current, "module": "Becas"})
 
-    return all_files
+    return filter_attachments(all_files, start_date, end_date)
 
 
 public_router = APIRouter(prefix="/employee",
