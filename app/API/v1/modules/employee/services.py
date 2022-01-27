@@ -73,3 +73,33 @@ def filter_attachments(list: List, start_date: datetime, end_date: datetime):
         if datetime.strftime(file_date, '%Y-%m-%d') >= datetime.strftime(start_date, '%Y-%m-%d') and datetime.strftime(file_date, '%Y-%m-%d') <= datetime.strftime(end_date, '%Y-%m-%d'):
             filtered_list.append(file)
     return filtered_list
+
+
+def get_last_attention_date(req: Request, employee_id: int):
+    response = http.request(
+        'GET', SERVICES["assistance"]+'/assistance/attended/?id_employee='+str(employee_id), headers={
+            "Authorization": "Bearer %s" % req.token
+        })
+    attentions = handle_response(response)
+    if len(attentions) > 0:
+        return attentions[0]["date"]
+    else:
+        return None
+
+
+def get_social_case_status(req: Request, employee_rut: int):
+    response = http.request(
+        'GET', SERVICES["socialCase"]+'/social-cases?search='+employee_rut, headers={
+            "Authorization": "Bearer %s" % req.token
+        })
+    cases = handle_response(response)
+
+    return len(cases["items"]) > 0
+
+
+def get_attention_in_tracking(req: Request, employee_id: int):
+    response = http.request(
+        'GET', SERVICES["assistance"]+'/assistance/attended/?status=SEGUIMIENTO&id_employee='+str(employee_id), headers={
+            "Authorization": "Bearer %s" % req.token
+        })
+    return(len(handle_response(response)) > 0)

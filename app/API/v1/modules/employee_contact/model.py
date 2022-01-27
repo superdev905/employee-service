@@ -10,7 +10,7 @@ class EmployeeContact(Base):
     __tablename__ = "employee_contact"
     id = Column(Integer, primary_key=True, autoincrement=True)
     employee_run = Column(String(12), ForeignKey(
-        'employee.run', ondelete="CASCADE"))
+        'employee.run', ondelete="CASCADE", onupdate="CASCADE"))
     address = Column(String(255), nullable=False)
     number = Column(String(100), nullable=False)
     latitude = Column(Float, nullable=False)
