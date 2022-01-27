@@ -100,12 +100,15 @@ def overloaded_update_one(item_id: int, relative_in: EmployeeRelativeCreate, db:
 def overloaded_get_all(skip: int = None,
                        limit: int = None,
                        employee_run: Optional[str] = None,
+                       state: Optional[str] = None,
                        db: Session = Depends(get_database)):
     filters = []
     if employee_run:
         filters.append(EmployeeRelative.employee_run == employee_run)
+    if state:
+        filters.append(EmployeeRelative.state == state)
 
-    return db.query(EmployeeRelative).filter(*filters).offset(skip).limit(limit).all()
+    return db.query(EmployeeRelative).filter(and_(*filters)).offset(skip).limit(limit).all()
 
 
 @router.patch('/{item_id}/block')
