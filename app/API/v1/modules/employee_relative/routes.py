@@ -9,7 +9,7 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from app.database.main import get_database
 from ...helpers.fetch_data import fetch_parameter_data
 from .model import EmployeeRelative
-from .schema import EmployeeRelative as EmployeeRelativeSchema, EmployeeRelativeCreate
+from .schema import EmployeeRelative as EmployeeRelativeSchema, EmployeeRelativeCreate, EmployeeRelativePatch
 
 
 router = SQLAlchemyCRUDRouter(
@@ -109,6 +109,24 @@ def overloaded_get_all(skip: int = None,
         filters.append(EmployeeRelative.state == state)
 
     return db.query(EmployeeRelative).filter(and_(*filters)).offset(skip).limit(limit).all()
+
+
+@router.patch('/{item_id}')
+def block_one(item_id: int,
+              body: EmployeeRelativePatch,
+              db: Session = Depends(get_database)):
+    found_employee = db.query(EmployeeRelative).filter(
+        EmployeeRelative.id == item_id).first()
+    if not found_employee:
+        raise HTTPException(
+            status_code=400, detail="Este empleado no existe")
+
+    found_employee.state = body.state
+
+    db.commit()
+    db.refresh(found_employee)
+
+    return found_employee
 
 
 @router.patch('/{item_id}/block')

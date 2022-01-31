@@ -42,3 +42,10 @@ class EmployeeRelativeCreate(BaseModel):
 
 class EmployeeRelative (EmployeeRelativeCreate):
     id: int
+
+
+class EmployeeRelativePatch (BaseModel):
+    state: Optional[str]
+
+    class Config:
+        orm_mode = True
