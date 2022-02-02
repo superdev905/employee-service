@@ -61,9 +61,10 @@ def get_all(req: Request,
     for i in list:
         result.append(
             {**i.__dict__,
-             "last_attention_date": get_last_attention_date(req, i.id),
-             "hast_attentions":  get_attention_in_tracking(req, i.id),
-             "social_case_status": get_social_case_status(req, i.run)})
+             #  "last_attention_date":  get_last_attention_date(req, i.id),
+             #  "hast_attentions":  get_attention_in_tracking(req, i.id),
+             #  "social_case_status": get_social_case_status(req, i.run)
+             })
 
     return {"docs": result, "total": total} if include_total == True else result
 
