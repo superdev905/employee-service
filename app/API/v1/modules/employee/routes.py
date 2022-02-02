@@ -38,6 +38,7 @@ def get_all(req: Request,
             state: Optional[str] = None,
             include_total: Optional[bool] = False,
             db: Session = Depends(get_database)):
+    print("---------------------, debug")
     state_filters = []
     if state:
         state_filters.append(Employee.state == state)
