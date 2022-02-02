@@ -27,7 +27,7 @@ def overloaded_get_all(skip: int = None,
     if employee_id:
         filters.append(EmployeeJob.employee_id == employee_id)
     filters.append(EmployeeJob.state == "CREATED")
-    return db.query(EmployeeJob).filter(*filters).offset(skip).limit(limit).order_by(EmployeeJob.created_at.desc()).all()
+    return db.query(EmployeeJob).filter(*filters).offset(skip).limit(limit).order_by(EmployeeJob.admission_date.desc()).all()
 
 
 @router.put('/{item_id}')
