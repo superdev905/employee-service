@@ -53,19 +53,9 @@ def get_all(req: Request,
     if(include_total):
         total = len(db.query(Employee).filter(
             and_(*state_filters, or_(*str_filters))).all())
-    result = []
     list = db.query(Employee).filter(and_(*state_filters, or_(*str_filters))
                                      ).order_by(Employee.created_at.desc()).offset(skip).limit(limit).all()
-
-    for i in list:
-        result.append(
-            {**i.__dict__,
-             "last_attention_date":  get_last_attention_date(req, i.id),
-             "hast_attentions":  get_attention_in_tracking(req, i.id),
-             "social_case_status": get_social_case_status(req, i.run)
-             })
-
-    return {"docs": result, "total": total} if include_total == True else result
+    return {"docs": list, "total": total} if include_total == True else list
 
 
 @router.post("")

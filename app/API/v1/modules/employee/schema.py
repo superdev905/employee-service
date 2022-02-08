@@ -78,6 +78,9 @@ class EmployeeItem(EmployeeBase):
 
 class EmployeePatch (BaseModel):
     state: Optional[str]
+    last_attention_date: Optional[datetime]
+    hast_follow_attentions: Optional[bool]
+    has_social_case: Optional[bool]
 
     class Config:
         orm_mode = True

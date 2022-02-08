@@ -33,6 +33,9 @@ class Employee(Base):
     state = Column(String(7), nullable=False,
                    default="CREATED", server_default="CREATED")
     etnia = Column(String(120))
+    last_attention_date = Column(DateTime)
+    hast_follow_attentions = Column(Boolean)
+    has_social_case = Column(Boolean)
     created_by = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=func.now())
