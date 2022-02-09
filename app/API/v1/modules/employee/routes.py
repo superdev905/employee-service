@@ -8,6 +8,8 @@ from fastapi.exceptions import HTTPException
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.elements import and_, or_
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
+from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import Params, Page
 from app.database.main import get_database
 from app.settings import SERVICES
 from ..employee_job.model import EmployeeJob
@@ -33,11 +35,11 @@ router = SQLAlchemyCRUDRouter(
 
 @router.get("")
 def get_all(req: Request,
-            skip: int = 0, limit: int = 30,
             search: Optional[str] = None,
             state: Optional[str] = None,
             include_total: Optional[bool] = False,
-            db: Session = Depends(get_database)):
+            db: Session = Depends(get_database),
+            pag_params: Params = Depends()):
     state_filters = []
     if state:
         state_filters.append(Employee.state == state)
@@ -49,13 +51,14 @@ def get_all(req: Request,
         str_filters.append(Employee.paternal_surname.ilike(formatted_search))
         str_filters.append(Employee.maternal_surname.ilike(formatted_search))
         str_filters.append(Employee.run.ilike(formatted_search))
-    total = 0
-    if(include_total):
-        total = len(db.query(Employee).filter(
-            and_(*state_filters, or_(*str_filters))).all())
-    list = db.query(Employee).filter(and_(*state_filters, or_(*str_filters))
-                                     ).order_by(Employee.created_at.desc()).offset(skip).limit(limit).all()
-    return {"docs": list, "total": total} if include_total == True else list
+    # total = 0
+    # if(include_total):
+    #     total = len(db.query(Employee).filter(
+    #         and_(*state_filters, or_(*str_filters))).all())
+
+    query = db.query(Employee).filter(and_(*state_filters, or_(*str_filters))
+                                      ).order_by(Employee.created_at.desc())
+    return paginate(query, pag_params)
 
 
 @router.post("")

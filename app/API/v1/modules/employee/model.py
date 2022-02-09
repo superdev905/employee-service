@@ -8,11 +8,13 @@ from sqlalchemy import Column, Integer, String, Boolean
 
 class Employee(Base):
     __tablename__ = "employee"
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    run = Column(String(12), nullable=False, unique=True, primary_key=True)
-    names = Column(String(120), nullable=False)
-    paternal_surname = Column(String(120), nullable=False)
-    maternal_surname = Column(String(120), nullable=True)
+    id = Column(Integer, primary_key=True, unique=True,
+                autoincrement=True, index=True)
+    run = Column(String(12), nullable=False, unique=True,
+                 primary_key=True, index=True)
+    names = Column(String(120), nullable=False, index=True)
+    paternal_surname = Column(String(120), nullable=False, index=True)
+    maternal_surname = Column(String(120), nullable=True, index=True)
     born_date = Column(DateTime, nullable=False)
     gender = Column(String(50), nullable=False)
     marital_status_id = Column(Integer, nullable=False)
