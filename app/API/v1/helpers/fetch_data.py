@@ -58,6 +58,6 @@ def fetch_users_service(token: str, user_id: int) -> str:
         })
     result = handle_response(user_req)
 
-    return {**result,
-            "paternalSurname": result["paternal_surname"],
-            "maternalSurname": result["maternal_surname"]}
+    return {**result[0],
+            "paternalSurname": result[0]["paternal_surname"],
+            "maternalSurname": result[0]["maternal_surname"]}
