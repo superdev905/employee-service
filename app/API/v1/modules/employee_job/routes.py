@@ -51,6 +51,7 @@ def update_one(item_id: int, update_body: EmployeeJobCreate, db: Session = Depen
     db.add(found_job)
     db.commit()
     db.refresh(found_job)
+    db.close()
 
     return found_job
 
@@ -67,5 +68,6 @@ def block_one(item_id: int, patch_body: EmployeeJobPatch, db: Session = Depends(
     db.add(found_job)
     db.commit()
     db.refresh(found_job)
+    db.close()
 
     return found_job

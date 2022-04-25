@@ -47,6 +47,7 @@ def get_one(req: Request, item_id: int, db: Session = Depends(get_database)):
                                         db_obj.relationship_id,
                                         "relationships")
 
+    db.close()
     return {**db_obj.__dict__, "relationship": relationship["description"]}
 
 
@@ -63,6 +64,7 @@ def overloaded_create_one(relative_in: EmployeeRelativeCreate, db: Session = Dep
     db.add(db_obj)
     db.commit()
     db.refresh(db_obj)
+    db.close()
     return db_obj
 
 
@@ -93,6 +95,7 @@ def overloaded_update_one(item_id: int, relative_in: EmployeeRelativeCreate, db:
     db.add(db_obj)
     db.commit()
     db.refresh(db_obj)
+    db.close()
     return db_obj
 
 
@@ -125,6 +128,7 @@ def block_one(item_id: int,
 
     db.commit()
     db.refresh(found_employee)
+    db.close()
 
     return found_employee
 
@@ -140,5 +144,6 @@ def block_one(item_id: int, db: Session = Depends(get_database)):
 
     db.commit()
     db.refresh(found_employee)
+    db.close()
 
     return found_employee

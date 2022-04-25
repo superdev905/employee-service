@@ -43,6 +43,7 @@ def overloaded_get_all(req: Request,
                        "specialty_detail": fetch_parameter_data(req.token, item.specialty_detail_id, "sub-specialties"),
                        "certifying_entity": entity})
 
+    db.close()
     return result
 
 
@@ -61,6 +62,7 @@ def create(body: SpecializationCreate, db: Session = Depends(get_database)):
     db.add(saved_data)
     db.commit()
     db.refresh(saved_data)
+    db.close()
 
     return saved_data
 
@@ -103,6 +105,7 @@ async def update_one(req: Request,
     if old_attachment:
         delete_attachment(req.token, old_attachment)
 
+    db.close()
     return updated_spec
 
 
@@ -117,5 +120,6 @@ def block_one(item_id: int, patch_body: SpecializationPatch, db: Session = Depen
     db.add(found_obj)
     db.commit()
     db.refresh(found_obj)
+    db.close()
 
     return found_obj

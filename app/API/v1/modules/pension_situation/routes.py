@@ -42,6 +42,8 @@ def overloaded_get_all(req: Request,
         result.append({**item.__dict__,
                        "afp_isp": afp_isp,
                        "isapre_fonasa": isapre_fonasa})
+    
+    db.close()
     return result
 
 
@@ -56,5 +58,6 @@ def block_one(item_id: int, patch_body: PensionSituationPatch, db: Session = Dep
     db.add(found_obj)
     db.commit()
     db.refresh(found_obj)
+    db.close()
 
     return found_obj

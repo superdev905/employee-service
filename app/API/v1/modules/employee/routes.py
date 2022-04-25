@@ -58,6 +58,7 @@ def get_all(req: Request,
 
     query = db.query(Employee).filter(and_(*state_filters, or_(*str_filters))
                                       ).order_by(Employee.created_at.desc())
+    db.close()
     return paginate(query, pag_params)
 
 
@@ -73,6 +74,7 @@ def overloaded_create_one(employee: EmployeeCreate, db: Session = Depends(get_da
     db.add(saved_employee)
     db.commit()
     db.refresh(saved_employee)
+    db.close()
     return saved_employee
 
 
@@ -97,7 +99,8 @@ def get_one(req: Request, item_id: int = None, db: Session = Depends(get_databas
 
     contact = db.query(EmployeeContact).filter(
         EmployeeContact.employee_run == found_employee.run).first()
-
+    
+    db.close()
     return {**found_employee.__dict__,
             "bank": bank_details,
             "marital_status": fetch_parameter_data(req.token, found_employee.marital_status_id, "marital-status"),
@@ -133,6 +136,7 @@ def create_revision(req: Request,
     db.add(db_revision)
     db.commit()
     db.refresh(db_revision)
+    db.close()
 
     return db_revision
 
@@ -158,6 +162,7 @@ def overloaded_update_one(item_id: int, update_body: EmployeeCreate, db: Session
     db.add(found_employee)
     db.commit()
     db.refresh(found_employee)
+    db.close()
 
     return found_employee
 
@@ -183,6 +188,7 @@ def patch_one(item_id: int, patch_body: EmployeePatch, db: Session = Depends(get
     db.add(found_employee)
     db.commit()
     db.refresh(found_employee)
+    db.close()
     return found_employee
 
 
@@ -209,6 +215,7 @@ def get_attachments(req: Request,
     for current in scholarship_files:
         all_files.append({**current, "module": "Becas"})
 
+    db.close()
     return filter_attachments(all_files, start_date, end_date)
 
 
@@ -223,6 +230,8 @@ def validate_rut(body: EmployeeValidate, db: Session = Depends(get_database)):
     if not found_employee:
         raise HTTPException(
             status_code=400, detail="Este trabajador no existe")
+    
+    db.close()
     return {"employeeId": found_employee.id}
 
 
@@ -251,6 +260,7 @@ def get_one(item_id: int = None, db: Session = Depends(get_database)):
     print('osjdisdjsijdisj', fetch_parameter_public(
         found_employee.marital_status_id, "marital-status"))
 
+    db.close()
     return {**found_employee.__dict__,
             "bank": bank_details,
             "marital_status": fetch_parameter_public(found_employee.marital_status_id, "marital-status"),

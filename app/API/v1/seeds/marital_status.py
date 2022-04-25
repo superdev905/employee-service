@@ -22,6 +22,7 @@ def seed_maritalStatus(db: Session):
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
+            db.close()       
 
 
 def seed_nationalities(db: Session):
@@ -36,6 +37,7 @@ def seed_nationalities(db: Session):
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
+            db.close()
 
 
 def seed_rsh(db: Session):
@@ -51,6 +53,7 @@ def seed_rsh(db: Session):
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
+            db.close()
 
 
 def seed_scholarship(db: Session):
@@ -64,3 +67,4 @@ def seed_scholarship(db: Session):
             db.add(db_obj)
             db.commit()
             db.refresh(db_obj)
+            db.close()

@@ -46,6 +46,8 @@ def overloaded_get_all(
                        "type_home": type_home,
                        "property_home": property_home,
                        "type_subsidy": type_subsidy})
+    
+    db.close()
     return result
 
 
@@ -60,5 +62,6 @@ def block_one(item_id: int, patch_body: HousingSituationPatch, db: Session = Dep
     db.add(found_obj)
     db.commit()
     db.refresh(found_obj)
+    db.close()
 
     return found_obj

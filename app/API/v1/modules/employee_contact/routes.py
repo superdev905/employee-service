@@ -43,6 +43,8 @@ def get_all(
             {**item.__dict__,
              "region": fetch_parameter_data(req.token, item.region_id, "regions"),
              "commune": fetch_parameter_data(req.token, item.commune_id, "communes")})
+    
+    db.close()
     return result
 
 
@@ -58,6 +60,7 @@ def overloaded_create_one(contact: EmployeeContactCreate, db: Session = Depends(
     db.add(db_obj)
     db.commit()
     db.refresh(db_obj)
+    db.close()
     return db_obj
 
 
@@ -73,6 +76,7 @@ def block_one(item_id: int, patch_body: EmployeeContactPatch,  db: Session = Dep
     db.add(found_employee)
     db.commit()
     db.refresh(found_employee)
+    db.close()
 
     return found_employee
 
@@ -94,6 +98,7 @@ def get_all(employee_run: Optional[str] = Query(None, alias="employeeRun"),
 
     commune = fetch_parameter_public(contact.commune_id, "communes")
     region = fetch_parameter_public(contact.region_id, "regions")
+    db.close()
     return {**contact.__dict__,
             "region": commune,
             "commune": region}
@@ -113,5 +118,6 @@ def update_contact(id: int,
     db.add(contact)
     db.commit()
     db.refresh(contact)
+    db.close()
 
     return contact
