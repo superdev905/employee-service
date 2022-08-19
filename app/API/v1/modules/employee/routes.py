@@ -116,8 +116,8 @@ def get_one(req: Request, item_id: int = None, db: Session = Depends(get_databas
 def get_one(body: EmployeeIds, db: Session = Depends(get_database)):
     print(body.employee_id)
 
-    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id.in_((body.employee_id)),
-                                                    EmployeeJob.state != "DELETED")).order_by(EmployeeJob.created_at.desc()).all()
+    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id.in_((body.employee_id)).label("employee_id"),
+                                                    EmployeeJob.state.label("state") != "DELETED")).order_by(EmployeeJob.admission_date.desc()).group_by(Employee.employee_id).all()
 
     current_job_res = jsonable_encoder(current_job)
     
