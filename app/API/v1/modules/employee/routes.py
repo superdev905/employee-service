@@ -20,7 +20,7 @@ from ..specialization.model import Specialization
 from ..attachment.services import get_employee_files
 from ..attachment.schema import AttachmentItem
 from .model import Employee, EmployeeRevision
-from .schema import EmployeeRevisionCreate, EmployeeSchema, EmployeeCreate, EmployeePatch, EmployeeValidate
+from .schema import EmployeeRevisionCreate, EmployeeSchema, EmployeeCreate, EmployeePatch, EmployeeValidate, EmployeeIds
 from ...helpers.fetch_data import fetch_parameter_data, fetch_parameter_public, fetch_service, fetch_users_service
 from .services import filter_attachments, get_attention_in_tracking, get_bank, get_last_attention_date, get_marital_status, fetch_data, get_social_case_status
 
@@ -111,6 +111,18 @@ def get_one(req: Request, item_id: int = None, db: Session = Depends(get_databas
             "pension_status": pension_status,
             "specialty": specialty,
             "contact": contact}
+
+@router.post("/current-job")
+def get_one(body: EmployeeIds, db: Session = Depends(get_database)):
+    print(body.employee_id)
+
+    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id.in_((body.employee_id)),
+                                                    EmployeeJob.state != "DELETED")).order_by(EmployeeJob.created_at.desc()).all()
+
+    current_job_res = jsonable_encoder(current_job)
+    
+    db.close()
+    return {"current_job": current_job_res}
 
 
 @router.post("/{item_id}/revision")

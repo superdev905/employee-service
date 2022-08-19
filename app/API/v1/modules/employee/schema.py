@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal, Optional, List
 from pydantic import BaseModel, Field
 from faker import Faker
 
@@ -116,3 +116,6 @@ class EmployeeRevisionCreate(EmployeeRevisionBase):
 
 class EmployeeRevisionItem(EmployeeRevisionBase):
     id: int
+
+class EmployeeIds(BaseModel):
+    employee_id: List[int]
