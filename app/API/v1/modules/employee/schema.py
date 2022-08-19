@@ -118,4 +118,4 @@ class EmployeeRevisionItem(EmployeeRevisionBase):
     id: int
 
 class EmployeeIds(BaseModel):
-    employee_id: List[int]
+    employee_id: List[str]
