@@ -34,3 +34,13 @@ class EmployeeJob(Base):
                        onupdate=func.now(), server_default=func.now())
     employee = relationship(
         "Employee", back_populates="jobs", foreign_keys=[employee_id], lazy="select")
+
+class EmployeeLastJob(Base):
+    __tablename__ = "GET_LAST_JOB"
+    employee_id = Column(Integer, primary_key=True)
+    admission_date = Column(Integer)
+    contract_type = Column(String(50))
+    business_id = Column(Integer)
+    construction_id = Column(Integer)
+    state = Column(String(7))
+    job_rank = Column(Integer)

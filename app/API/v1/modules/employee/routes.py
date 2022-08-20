@@ -12,7 +12,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi_pagination import Params, Page
 from app.database.main import get_database
 from app.settings import SERVICES
-from ..employee_job.model import EmployeeJob
+from ..employee_job.model import EmployeeJob, EmployeeLastJob
 from ..housing_situation.model import HousingSituation
 from ..pension_situation.model import PensionSituation
 from ..employee_contact.model import EmployeeContact
@@ -116,8 +116,7 @@ def get_one(req: Request, item_id: int = None, db: Session = Depends(get_databas
 def get_one(body: EmployeeIds, db: Session = Depends(get_database)):
     print(body.employee_id)
 
-    current_job = db.query(EmployeeJob).filter(and_(EmployeeJob.employee_id.in_((body.employee_id)).label("employee_id"),
-                                                    EmployeeJob.state.label("state") != "DELETED")).order_by(EmployeeJob.admission_date.desc()).group_by(Employee.employee_id).all()
+    current_job = db.query(EmployeeLastJob).filter(and_(EmployeeLastJob.employee_id.in_((body.employee_id)))).all()
 
     current_job_res = jsonable_encoder(current_job)
     
